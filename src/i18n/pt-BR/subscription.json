@@ -1,0 +1,16 @@
+{
+  "not_found": "Assinatura não encontrada",
+  "expired": "Sua assinatura expirou. Renove para continuar usando o serviço",
+  "plan_limit_exceeded": "Limite do plano atingido para {{resource}}. Máximo: {{limit}}. Faça upgrade do seu plano",
+  "plan_not_found": "Plano não encontrado",
+  "upgraded_successfully": "Plano atualizado com sucesso!",
+  "cancelled_successfully": "Assinatura cancelada",
+  "plan_free": "Plano Gratuito",
+  "plan_pro": "Plano Pro",
+  "plan_premium": "Plano Premium",
+  "status_active": "Ativa",
+  "status_trial": "Teste Grátis",
+  "status_canceled": "Cancelada",
+  "status_expired": "Expirada",
+  "trial_days_remaining": "{{days}} dias restantes de teste"
+}

@@ -1,0 +1,17 @@
+{
+  "internal_server_error": "Erro interno do servidor. Tente novamente mais tarde",
+  "validation_error": "Erro de validação nos dados enviados",
+  "not_found": "Recurso não encontrado",
+  "forbidden": "Você não tem permissão para acessar este recurso",
+  "bad_request": "Requisição inválida",
+  "success": "Operação realizada com sucesso",
+  "created": "Criado com sucesso",
+  "updated": "Atualizado com sucesso",
+  "deleted": "Excluído com sucesso",
+  "required_field": "Campo obrigatório",
+  "invalid_format": "Formato inválido",
+  "min_length": "Deve ter no mínimo {{min}} caracteres",
+  "max_length": "Deve ter no máximo {{max}} caracteres",
+  "min_value": "Valor mínimo: {{min}}",
+  "max_value": "Valor máximo: {{max}}"
+}

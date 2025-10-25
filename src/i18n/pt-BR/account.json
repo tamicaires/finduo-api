@@ -1,0 +1,14 @@
+{
+  "not_found": "Conta não encontrada",
+  "limit_exceeded": "Limite de contas atingido. Máximo permitido: {{maxAccounts}}. Faça upgrade do seu plano para criar mais contas",
+  "belongs_to_another_couple": "Esta conta pertence a outro casal",
+  "cannot_delete_with_balance": "Não é possível excluir conta com saldo. Transfira ou zere o saldo antes de excluir",
+  "created_successfully": "Conta criada com sucesso!",
+  "updated_successfully": "Conta atualizada com sucesso",
+  "deleted_successfully": "Conta excluída com sucesso",
+  "name_required": "Nome da conta é obrigatório",
+  "name_min_length": "Nome deve ter no mínimo {{minLength}} caracteres",
+  "balance_invalid": "Saldo inicial inválido",
+  "type_individual": "Conta Individual",
+  "type_joint": "Conta Conjunta"
+}

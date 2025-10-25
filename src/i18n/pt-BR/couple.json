@@ -1,0 +1,18 @@
+{
+  "not_found": "Casal não encontrado",
+  "user_not_in_couple": "Você não faz parte de nenhum casal. Crie ou entre em um casal para continuar",
+  "user_already_in_couple": "Usuário já faz parte de um casal",
+  "created_successfully": "Casal criado com sucesso!",
+  "free_spending_updated": "Gasto livre atualizado com sucesso",
+  "user_a_required": "Primeiro usuário é obrigatório",
+  "user_b_required": "Segundo usuário é obrigatório",
+  "free_spending_invalid": "Valor de gasto livre inválido",
+  "reset_day_invalid": "Dia de reset deve estar entre 1 e 31",
+  "dashboard_title": "Visão Financeira do Casal",
+  "total_balance": "Saldo Total",
+  "monthly_income": "Receitas do Mês",
+  "monthly_expenses": "Despesas do Mês",
+  "free_spending_a": "Gasto Livre - {{name}}",
+  "free_spending_b": "Gasto Livre - {{name}}",
+  "remaining": "Restante"
+}

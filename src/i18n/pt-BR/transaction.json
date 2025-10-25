@@ -1,0 +1,18 @@
+{
+  "not_found": "Transação não encontrada",
+  "limit_exceeded": "Limite de transações do mês atingido. Máximo permitido: {{maxTransactions}}. Faça upgrade do seu plano",
+  "insufficient_free_spending": "Gasto livre insuficiente. Disponível: R$ {{available}}, Necessário: R$ {{required}}",
+  "invalid_amount": "Valor da transação inválido",
+  "created_successfully": "Transação registrada com sucesso!",
+  "updated_successfully": "Transação atualizada com sucesso",
+  "deleted_successfully": "Transação excluída com sucesso",
+  "amount_required": "Valor é obrigatório",
+  "amount_positive": "Valor deve ser positivo",
+  "type_required": "Tipo de transação é obrigatório",
+  "account_required": "Conta é obrigatória",
+  "paid_by_required": "Quem pagou é obrigatório",
+  "type_income": "Receita",
+  "type_expense": "Despesa",
+  "couple_expense": "Gasto Conjunto",
+  "individual_expense": "Gasto Individual"
+}
