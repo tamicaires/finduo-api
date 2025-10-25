@@ -1,3 +1,6 @@
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
+
 export class Couple {
   id: string;
   user_id_a: string;
@@ -10,42 +13,40 @@ export class Couple {
   created_at: Date;
   updated_at: Date;
 
-  constructor(props: Couple) {
-    Object.assign(this, props);
+  constructor(data: CoupleType) {
+    const validatedData = coupleSchema.parse(data);
+    Object.assign(this, validatedData);
+    this.id = validatedData.id ?? randomUUID();
+    this.created_at = validatedData.created_at ?? new Date();
+    this.updated_at = validatedData.updated_at ?? new Date();
   }
 
-  // Helper: Check if user belongs to this couple
   hasUser(userId: string): boolean {
     return this.user_id_a === userId || this.user_id_b === userId;
   }
 
-  // Helper: Get partner ID
   getPartnerId(userId: string): string | null {
     if (this.user_id_a === userId) return this.user_id_b;
     if (this.user_id_b === userId) return this.user_id_a;
     return null;
   }
 
-  // Helper: Check if user is User A
   isUserA(userId: string): boolean {
     return this.user_id_a === userId;
   }
 
-  // Helper: Get free spending monthly for specific user
   getFreeSpendingMonthly(userId: string): number {
     return this.isUserA(userId)
       ? this.free_spending_a_monthly
       : this.free_spending_b_monthly;
   }
 
-  // Helper: Get remaining free spending for specific user
   getFreeSpendingRemaining(userId: string): number {
     return this.isUserA(userId)
       ? this.free_spending_a_remaining
       : this.free_spending_b_remaining;
   }
 
-  // Helper: Update free spending for specific user
   updateFreeSpending(userId: string, amount: number): void {
     if (this.isUserA(userId)) {
       this.free_spending_a_remaining = amount;
@@ -53,4 +54,28 @@ export class Couple {
       this.free_spending_b_remaining = amount;
     }
   }
+
+  shouldResetToday(today: Date): boolean {
+    return today.getDate() === this.reset_day;
+  }
+
+  resetFreeSpending(): void {
+    this.free_spending_a_remaining = this.free_spending_a_monthly;
+    this.free_spending_b_remaining = this.free_spending_b_monthly;
+  }
 }
+
+export const coupleSchema = z.object({
+  id: z.string().uuid().optional(),
+  user_id_a: z.string().uuid(),
+  user_id_b: z.string().uuid(),
+  free_spending_a_monthly: z.number().min(0).default(0),
+  free_spending_b_monthly: z.number().min(0).default(0),
+  free_spending_a_remaining: z.number().min(0).default(0),
+  free_spending_b_remaining: z.number().min(0).default(0),
+  reset_day: z.number().int().min(1).max(31).default(1),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+});
+
+export type CoupleType = z.infer<typeof coupleSchema>;
