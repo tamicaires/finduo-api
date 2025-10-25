@@ -22,7 +22,8 @@ export interface ICoupleRepository {
   updateFreeSpending(
     coupleId: string,
     userId: string,
-    newAmount: number,
+    newMonthlyAmount: number,
+    newRemainingAmount: number,
   ): Promise<void>;
 
   resetFreeSpending(coupleId: string): Promise<void>;

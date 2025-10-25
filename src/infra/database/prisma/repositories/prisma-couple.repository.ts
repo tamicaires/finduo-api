@@ -90,7 +90,8 @@ export class PrismaCoupleRepository implements ICoupleRepository {
   async updateFreeSpending(
     coupleId: string,
     userId: string,
-    newAmount: number,
+    newMonthlyAmount: number,
+    newRemainingAmount: number,
   ): Promise<void> {
     const couple = await this.prisma.couple.findUnique({
       where: { id: coupleId },
@@ -103,8 +104,14 @@ export class PrismaCoupleRepository implements ICoupleRepository {
     await this.prisma.couple.update({
       where: { id: coupleId },
       data: isUserA
-        ? { free_spending_a_remaining: newAmount }
-        : { free_spending_b_remaining: newAmount },
+        ? {
+            free_spending_a_monthly: newMonthlyAmount,
+            free_spending_a_remaining: newRemainingAmount,
+          }
+        : {
+            free_spending_b_monthly: newMonthlyAmount,
+            free_spending_b_remaining: newRemainingAmount,
+          },
     });
   }
 
