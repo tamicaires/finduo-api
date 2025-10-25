@@ -1,0 +1,153 @@
+// Finduo - SaaS de Finanças para Casais - Schema Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & MULTI-TENANCY ENTITIES
+// ============================================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  name          String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Multi-Tenancy: A user can be part of a Couple (Tenant)
+  couple_as_a   Couple?  @relation("UserA")
+  couple_as_b   Couple?  @relation("UserB")
+
+  transactions_paid Transaction[] @relation("PaidBy")
+
+  @@map("users")
+}
+
+model Couple {
+  id                       String   @id @default(uuid())
+  user_id_a                String   @unique
+  user_id_b                String   @unique
+
+  // Free Spending Monthly configured for each partner
+  free_spending_a_monthly   Decimal  @default(0) @db.Decimal(10, 2)
+  free_spending_b_monthly   Decimal  @default(0) @db.Decimal(10, 2)
+
+  // Remaining Free Spending - Dynamically updated
+  free_spending_a_remaining Decimal  @default(0) @db.Decimal(10, 2)
+  free_spending_b_remaining Decimal  @default(0) @db.Decimal(10, 2)
+
+  // Day of month to reset Free Spending (1-31)
+  reset_day                 Int      @default(1)
+
+  created_at                DateTime @default(now())
+  updated_at                DateTime @updatedAt
+
+  // Relations
+  user_a       User          @relation("UserA", fields: [user_id_a], references: [id], onDelete: Cascade)
+  user_b       User          @relation("UserB", fields: [user_id_b], references: [id], onDelete: Cascade)
+
+  accounts     Account[]
+  transactions Transaction[]
+  subscription Subscription?
+
+  @@map("couples")
+}
+
+// ============================================
+// PLAN & SUBSCRIPTION ENTITIES (SaaS)
+// ============================================
+
+model Plan {
+  id                     String   @id @default(uuid())
+  name                   String   @unique
+  price_monthly          Decimal  @db.Decimal(10, 2)
+  max_accounts           Int      @default(5)
+  max_transactions_month Int      @default(100)
+  features               Json     // List of enabled features
+  created_at             DateTime @default(now())
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id         String             @id @default(uuid())
+  couple_id  String             @unique
+  plan_id    String
+  status     SubscriptionStatus @default(TRIAL)
+  start_date DateTime           @default(now())
+  end_date   DateTime?
+  created_at DateTime           @default(now())
+  updated_at DateTime           @updatedAt
+
+  // Relations
+  couple Couple @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [plan_id], references: [id])
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIAL
+  CANCELED
+  EXPIRED
+}
+
+// ============================================
+// FINANCIAL ENTITIES
+// ============================================
+
+model Account {
+  id              String   @id @default(uuid())
+  couple_id       String   // FK - Tenant Isolation
+  owner_id        String?  // Null = Joint Account
+  name            String
+  current_balance Decimal  @default(0) @db.Decimal(10, 2)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Relations
+  couple       Couple        @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([couple_id])
+  @@map("accounts")
+}
+
+model Transaction {
+  id                String          @id @default(uuid())
+  couple_id         String          // FK - Tenant Isolation
+  type              TransactionType
+  amount            Decimal         @db.Decimal(10, 2)
+  description       String?
+  paid_by_id        String          // Who paid
+  account_id        String          // Source/destination account
+  is_couple_expense Boolean         @default(false) // Joint expense or individual
+  category          String?
+  transaction_date  DateTime        @default(now())
+  created_at        DateTime        @default(now())
+
+  // Relations
+  couple  Couple  @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  paid_by User    @relation("PaidBy", fields: [paid_by_id], references: [id])
+  account Account @relation(fields: [account_id], references: [id])
+
+  @@index([couple_id])
+  @@index([paid_by_id])
+  @@index([transaction_date])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
