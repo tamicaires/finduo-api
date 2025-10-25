@@ -627,13 +627,13 @@ describe('RegisterTransactionUseCase', () => {
 
 ### Fase 1: Foundation (Semana 1)
 1. ✅ Setup NestJS + Prisma + PostgreSQL
-2. ⬜ Criar Exception Architecture
-3. ⬜ Criar Logger Service
-4. ⬜ Criar Prisma Tenant Service
-5. ⬜ Criar Domain Entities
+2. ✅ Criar Exception Architecture
+3. ✅ Criar Logger Service
+4. ✅ Criar Prisma Tenant Service
+5. ✅ Criar Domain Entities
 
 ### Fase 2: Core Domain (Semana 2)
-6. ⬜ Implementar Repositories (interfaces + Prisma)
+6. ✅ Implementar Repositories (interfaces + Prisma)
 7. ⬜ Criar Guards e Decorators
 8. ⬜ Implementar Use Cases de Auth
 9. ⬜ Implementar Use Cases de Couple
