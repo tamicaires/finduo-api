@@ -2,30 +2,31 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { InvalidCredentialsException } from '@core/exceptions/auth/invalid-credentials.exception';
+import { ValidateUserUseCase } from '@application/auth/useCases/validate-user/validate-user.use-case';
+import { User } from '@core/domain/entities/user.entity';
 
 /**
  * Local Strategy for Passport (Email/Password login)
- * 
- * Used in SignIn flow
- * Will be implemented when we have User repository
+ *
+ * Used by Passport for email/password authentication
+ * Delegates to ValidateUserUseCase for business logic
  */
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly validateUserUseCase: ValidateUserUseCase) {
     super({
       usernameField: 'email',
       passwordField: 'password',
     });
   }
 
-  async validate(email: string, password: string): Promise<any> {
-    // TODO: Implement when UserRepository is ready
-    // const user = await this.authService.validateUser(email, password);
-    // if (!user) {
-    //   throw new InvalidCredentialsException();
-    // }
-    // return user;
-    
-    throw new Error('LocalStrategy not yet implemented');
+  async validate(email: string, password: string): Promise<User> {
+    const user = await this.validateUserUseCase.execute({ email, password });
+
+    if (!user) {
+      throw new InvalidCredentialsException();
+    }
+
+    return user;
   }
 }
