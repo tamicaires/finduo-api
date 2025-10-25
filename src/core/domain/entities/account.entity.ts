@@ -1,14 +1,24 @@
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
+import { AccountType as AccountTypeEnum } from '@core/enum/account-type.enum';
 
 export class Account {
   id: string;
   couple_id: string;
-  owner_id: string | null; // null = Joint Account
+  owner_id: string | null;
   name: string;
+  type: AccountTypeEnum;
   current_balance: number;
   created_at: Date;
   updated_at: Date;
+
+  get balance(): number {
+    return this.current_balance;
+  }
+
+  set balance(value: number) {
+    this.current_balance = value;
+  }
 
   constructor(data: AccountType) {
     const validatedData = accountSchema.parse(data);
@@ -49,6 +59,7 @@ export const accountSchema = z.object({
   couple_id: z.string().uuid(),
   owner_id: z.string().uuid().nullable().optional(),
   name: z.string().min(1),
+  type: z.nativeEnum(AccountTypeEnum),
   current_balance: z.number().default(0),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),

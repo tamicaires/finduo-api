@@ -8,8 +8,10 @@ export class Transaction {
   type: TransactionType;
   amount: number;
   description: string | null;
+  user_id: string;
   paid_by_id: string;
   account_id: string;
+  is_free_spending: boolean;
   is_couple_expense: boolean;
   category: string | null;
   transaction_date: Date;
@@ -61,8 +63,10 @@ export const transactionSchema = z.object({
   type: z.nativeEnum(TransactionType),
   amount: z.number().positive(),
   description: z.string().nullable().optional(),
+  user_id: z.string().uuid(),
   paid_by_id: z.string().uuid(),
   account_id: z.string().uuid(),
+  is_free_spending: z.boolean().default(false),
   is_couple_expense: z.boolean().default(false),
   category: z.string().nullable().optional(),
   transaction_date: z.date().optional(),

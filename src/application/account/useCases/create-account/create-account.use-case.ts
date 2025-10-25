@@ -76,7 +76,7 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
       couple_id: input.coupleId,
       name: input.name,
       type: input.type,
-      balance: input.initial_balance || 0,
+      current_balance: input.initial_balance || 0,
     });
 
     const created = await this.accountRepository.create(account);

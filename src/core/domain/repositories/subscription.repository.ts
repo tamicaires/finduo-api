@@ -9,6 +9,7 @@ import { SubscriptionStatus } from '@core/enum/subscription-status.enum';
 export interface ISubscriptionRepository {
   findById(id: string): Promise<Subscription | null>;
   findByCoupleId(coupleId: string): Promise<Subscription | null>;
+  findActiveByCoupleId(coupleId: string): Promise<Subscription | null>;
   findByPlanId(planId: string): Promise<Subscription[]>;
   findByStatus(status: SubscriptionStatus): Promise<Subscription[]>;
   create(subscription: Subscription): Promise<Subscription>;

@@ -16,7 +16,6 @@ import { LocalStrategy } from '@infra/http/auth/strategies/local.strategy';
 
 // Repositories
 import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma-user.repository';
-import { IUserRepository } from '@core/domain/repositories/user.repository';
 
 @Module({
   imports: [
@@ -30,7 +29,7 @@ import { IUserRepository } from '@core/domain/repositories/user.repository';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key-change-in-production',
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as string | number,
         },
       }),
     }),
@@ -49,11 +48,6 @@ import { IUserRepository } from '@core/domain/repositories/user.repository';
     {
       provide: 'IUserRepository',
       useClass: PrismaUserRepository,
-    },
-    // Alias for injection
-    {
-      provide: IUserRepository,
-      useExisting: 'IUserRepository',
     },
   ],
   exports: [SignUpUseCase, SignInUseCase, ValidateUserUseCase, JwtModule],

@@ -12,9 +12,6 @@ import { DeleteAccountUseCase } from './useCases/delete-account/delete-account.u
 import { PrismaAccountRepository } from '@infra/database/prisma/repositories/prisma-account.repository';
 import { PrismaSubscriptionRepository } from '@infra/database/prisma/repositories/prisma-subscription.repository';
 import { PrismaPlanRepository } from '@infra/database/prisma/repositories/prisma-plan.repository';
-import { IAccountRepository } from '@core/domain/repositories/account.repository';
-import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
-import { IPlanRepository } from '@core/domain/repositories/plan.repository';
 
 @Module({
   imports: [DatabaseModule, LoggingModule],
@@ -31,24 +28,12 @@ import { IPlanRepository } from '@core/domain/repositories/plan.repository';
       useClass: PrismaAccountRepository,
     },
     {
-      provide: IAccountRepository,
-      useExisting: 'IAccountRepository',
-    },
-    {
       provide: 'ISubscriptionRepository',
       useClass: PrismaSubscriptionRepository,
     },
     {
-      provide: ISubscriptionRepository,
-      useExisting: 'ISubscriptionRepository',
-    },
-    {
       provide: 'IPlanRepository',
       useClass: PrismaPlanRepository,
-    },
-    {
-      provide: IPlanRepository,
-      useExisting: 'IPlanRepository',
     },
   ],
   exports: [

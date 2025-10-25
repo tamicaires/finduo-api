@@ -12,9 +12,6 @@ import { DeleteTransactionUseCase } from './useCases/delete-transaction/delete-t
 import { PrismaTransactionRepository } from '@infra/database/prisma/repositories/prisma-transaction.repository';
 import { PrismaAccountRepository } from '@infra/database/prisma/repositories/prisma-account.repository';
 import { PrismaCoupleRepository } from '@infra/database/prisma/repositories/prisma-couple.repository';
-import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
-import { IAccountRepository } from '@core/domain/repositories/account.repository';
-import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 
 @Module({
   imports: [DatabaseModule, LoggingModule, EventEmitterModule],
@@ -30,24 +27,12 @@ import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
       useClass: PrismaTransactionRepository,
     },
     {
-      provide: ITransactionRepository,
-      useExisting: 'ITransactionRepository',
-    },
-    {
       provide: 'IAccountRepository',
       useClass: PrismaAccountRepository,
     },
     {
-      provide: IAccountRepository,
-      useExisting: 'IAccountRepository',
-    },
-    {
       provide: 'ICoupleRepository',
       useClass: PrismaCoupleRepository,
-    },
-    {
-      provide: ICoupleRepository,
-      useExisting: 'ICoupleRepository',
     },
   ],
   exports: [

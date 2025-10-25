@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
+import { Transaction } from '@core/domain/entities/transaction.entity';
 import { LoggerService } from '@infra/logging/logger.service';
 import { TransactionType } from '@core/enum/transaction-type.enum';
 import { TransactionCategory } from '@core/enum/transaction-category.enum';
@@ -61,17 +62,19 @@ export class ListTransactionsUseCase
     });
 
     // Get transactions with pagination
-    const result = await this.transactionRepository.findByCoupleIdPaginated(
-      input.coupleId,
+    const result = await this.transactionRepository.findByFilters(
+      {
+        coupleId: input.coupleId,
+        ...input.filters,
+      },
       {
         limit: input.limit || 50,
         cursor: input.cursor,
-        ...input.filters,
       },
     );
 
     return {
-      transactions: result.data.map((tx) => ({
+      transactions: result.data.map((tx: Transaction) => ({
         id: tx.id,
         account_id: tx.account_id,
         user_id: tx.user_id,

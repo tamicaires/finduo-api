@@ -25,6 +25,19 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     return subscription ? PrismaSubscriptionMapper.toDomain(subscription) : null;
   }
 
+  async findActiveByCoupleId(coupleId: string): Promise<Subscription | null> {
+    const subscription = await this.prisma.subscription.findFirst({
+      where: {
+        couple_id: coupleId,
+        status: {
+          in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL],
+        },
+      },
+    });
+
+    return subscription ? PrismaSubscriptionMapper.toDomain(subscription) : null;
+  }
+
   async findByPlanId(planId: string): Promise<Subscription[]> {
     const subscriptions = await this.prisma.subscription.findMany({
       where: { plan_id: planId },
