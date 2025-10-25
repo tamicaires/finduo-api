@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
-import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { TransactionNotFoundException } from '@core/exceptions/transaction/transaction-not-found.exception';
 import { LoggerService } from '@infra/logging/logger.service';
 import { UnitOfWork } from '@infra/database/prisma/unit-of-work';
@@ -36,7 +35,6 @@ export class DeleteTransactionUseCase
 {
   constructor(
     private readonly transactionRepository: ITransactionRepository,
-    private readonly accountRepository: IAccountRepository,
     private readonly unitOfWork: UnitOfWork,
     private readonly eventEmitter: EventEmitter2,
     private readonly logger: LoggerService,
@@ -64,7 +62,7 @@ export class DeleteTransactionUseCase
       await prisma.account.update({
         where: { id: transaction.account_id },
         data: {
-          balance: {
+          current_balance: {
             increment: balanceChange,
           },
         },
@@ -77,7 +75,7 @@ export class DeleteTransactionUseCase
         });
 
         if (couple) {
-          const isUserA = couple.user_id_a === transaction.user_id;
+          const isUserA = couple.user_id_a === transaction.paid_by_id;
           await prisma.couple.update({
             where: { id: input.coupleId },
             data: isUserA
@@ -97,7 +95,7 @@ export class DeleteTransactionUseCase
     this.eventEmitter.emit('transaction.deleted', {
       transactionId: input.transactionId,
       coupleId: input.coupleId,
-      userId: transaction.user_id,
+      userId: transaction.paid_by_id,
       type: transaction.type,
       amount: transaction.amount,
     });

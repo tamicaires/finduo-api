@@ -1,4 +1,4 @@
-import { Plan as PrismaPlan } from '@prisma/client';
+import { Plan as PrismaPlan, Prisma } from '@prisma/client';
 import { Plan } from '@core/domain/entities/plan.entity';
 
 /**
@@ -20,14 +20,14 @@ export class PrismaPlanMapper {
     });
   }
 
-  static toPrisma(plan: Plan): Omit<PrismaPlan, 'created_at'> {
+  static toPrisma(plan: Plan): Prisma.PlanUncheckedCreateInput {
     return {
       id: plan.id,
       name: plan.name,
-      price_monthly: plan.price_monthly,
+      price_monthly: new Prisma.Decimal(plan.price_monthly),
       max_accounts: plan.max_accounts,
       max_transactions_month: plan.max_transactions_month,
-      features: plan.features as any, // Prisma Json type
+      features: plan.features,
     };
   }
 }

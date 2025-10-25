@@ -55,7 +55,7 @@ export const planSchema = z.object({
   price_monthly: z.number().min(0),
   max_accounts: z.number().int().positive().default(5),
   max_transactions_month: z.number().int().positive().default(100),
-  features: z.record(z.boolean()).default({}),
+  features: z.record(z.string(), z.boolean()).default({}),
   created_at: z.date().optional(),
 });
 

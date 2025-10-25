@@ -23,16 +23,17 @@ export interface ListTransactionsOutput {
   transactions: Array<{
     id: string;
     account_id: string;
-    user_id: string;
+    paid_by_id: string;
     type: TransactionType;
     amount: number;
-    category: TransactionCategory;
+    category: string | null;
     description: string | null;
     transaction_date: Date;
     is_free_spending: boolean;
+    is_couple_expense: boolean;
     created_at: Date;
   }>;
-  next_cursor: string | null;
+  nextCursor: string | null;
 }
 
 /**
@@ -77,16 +78,17 @@ export class ListTransactionsUseCase
       transactions: result.data.map((tx: Transaction) => ({
         id: tx.id,
         account_id: tx.account_id,
-        user_id: tx.user_id,
+        paid_by_id: tx.paid_by_id,
         type: tx.type,
         amount: tx.amount,
         category: tx.category,
         description: tx.description,
         transaction_date: tx.transaction_date,
         is_free_spending: tx.is_free_spending,
+        is_couple_expense: tx.is_couple_expense,
         created_at: tx.created_at,
       })),
-      next_cursor: result.next_cursor,
+      nextCursor: result.nextCursor,
     };
   }
 }

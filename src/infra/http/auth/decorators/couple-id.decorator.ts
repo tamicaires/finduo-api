@@ -12,7 +12,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
  * }
  */
 export const CoupleId = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): string => {
+  (_data: unknown, ctx: ExecutionContext): string => {
     const request = ctx.switchToHttp().getRequest();
     return request.coupleId as string;
   },

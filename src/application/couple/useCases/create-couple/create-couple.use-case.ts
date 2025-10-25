@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
-import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
 import { IPlanRepository } from '@core/domain/repositories/plan.repository';
 import { Couple } from '@core/domain/entities/couple.entity';
 import { Subscription } from '@core/domain/entities/subscription.entity';
@@ -53,7 +52,6 @@ export class CreateCoupleUseCase implements IUseCase<CreateCoupleInput, CreateCo
 
   constructor(
     private readonly coupleRepository: ICoupleRepository,
-    private readonly subscriptionRepository: ISubscriptionRepository,
     private readonly planRepository: IPlanRepository,
     private readonly unitOfWork: UnitOfWork,
     private readonly logger: LoggerService,

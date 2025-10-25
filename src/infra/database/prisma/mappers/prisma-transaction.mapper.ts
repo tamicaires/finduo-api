@@ -1,4 +1,4 @@
-import { Transaction as PrismaTransaction, TransactionType as PrismaTransactionType } from '@prisma/client';
+import { Transaction as PrismaTransaction, TransactionType as PrismaTransactionType, Prisma } from '@prisma/client';
 import { Transaction } from '@core/domain/entities/transaction.entity';
 import { TransactionType } from '@core/enum/transaction-type.enum';
 
@@ -17,6 +17,7 @@ export class PrismaTransactionMapper {
       description: prismaTransaction.description,
       paid_by_id: prismaTransaction.paid_by_id,
       account_id: prismaTransaction.account_id,
+      is_free_spending: prismaTransaction.is_free_spending,
       is_couple_expense: prismaTransaction.is_couple_expense,
       category: prismaTransaction.category,
       transaction_date: prismaTransaction.transaction_date,
@@ -29,10 +30,11 @@ export class PrismaTransactionMapper {
       id: transaction.id,
       couple_id: transaction.couple_id,
       type: transaction.type as PrismaTransactionType,
-      amount: transaction.amount,
+      amount: new Prisma.Decimal(transaction.amount),
       description: transaction.description,
       paid_by_id: transaction.paid_by_id,
       account_id: transaction.account_id,
+      is_free_spending: transaction.is_free_spending,
       is_couple_expense: transaction.is_couple_expense,
       category: transaction.category,
       transaction_date: transaction.transaction_date,

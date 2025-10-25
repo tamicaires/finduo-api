@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IUseCase } from '@shared/protocols/use-case.interface';
-import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { Transaction } from '@core/domain/entities/transaction.entity';
@@ -56,7 +55,6 @@ export class RegisterTransactionUseCase
   implements IUseCase<RegisterTransactionInput, RegisterTransactionOutput>
 {
   constructor(
-    private readonly transactionRepository: ITransactionRepository,
     private readonly accountRepository: IAccountRepository,
     private readonly coupleRepository: ICoupleRepository,
     private readonly unitOfWork: UnitOfWork,
@@ -102,13 +100,14 @@ export class RegisterTransactionUseCase
       const transaction = new Transaction({
         couple_id: input.coupleId,
         account_id: input.account_id,
-        user_id: input.userId,
+        paid_by_id: input.userId,
         type: input.type,
         amount: input.amount,
         category: input.category,
         description: input.description || null,
         transaction_date: input.transaction_date || new Date(),
         is_free_spending: input.is_free_spending || false,
+        is_couple_expense: false,
       });
 
       const createdTransaction = await prisma.transaction.create({
@@ -116,13 +115,14 @@ export class RegisterTransactionUseCase
           id: transaction.id,
           couple_id: transaction.couple_id,
           account_id: transaction.account_id,
-          user_id: transaction.user_id,
+          paid_by_id: transaction.paid_by_id,
           type: transaction.type,
           amount: transaction.amount,
           category: transaction.category,
           description: transaction.description,
           transaction_date: transaction.transaction_date,
           is_free_spending: transaction.is_free_spending,
+          is_couple_expense: transaction.is_couple_expense,
         },
       });
 
@@ -131,7 +131,7 @@ export class RegisterTransactionUseCase
       await prisma.account.update({
         where: { id: input.account_id },
         data: {
-          balance: {
+          current_balance: {
             increment: balanceChange,
           },
         },

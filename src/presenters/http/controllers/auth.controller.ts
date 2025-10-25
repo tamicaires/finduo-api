@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SignUpUseCase } from '@application/auth/useCases/sign-up/sign-up.use-case';
 import { SignInUseCase } from '@application/auth/useCases/sign-in/sign-in.use-case';

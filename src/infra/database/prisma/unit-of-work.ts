@@ -24,7 +24,7 @@ export class UnitOfWork {
    * If any operation fails, all changes are rolled back
    */
   async execute<T>(
-    fn: (prisma: PrismaClient) => Promise<T>,
+    fn: (prisma: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'>) => Promise<T>,
   ): Promise<T> {
     return await this.prisma.$transaction(fn);
   }
@@ -34,7 +34,7 @@ export class UnitOfWork {
    * Allows custom timeout and isolation level
    */
   async executeWithOptions<T>(
-    fn: (prisma: PrismaClient) => Promise<T>,
+    fn: (prisma: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'>) => Promise<T>,
     options?: {
       maxWait?: number;
       timeout?: number;

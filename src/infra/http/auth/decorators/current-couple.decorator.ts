@@ -13,7 +13,7 @@ import { Couple } from '@core/domain/entities/couple.entity';
  * }
  */
 export const CurrentCouple = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): Couple => {
+  (_data: unknown, ctx: ExecutionContext): Couple => {
     const request = ctx.switchToHttp().getRequest();
     return request.couple as Couple;
   },

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@infra/database/database.module';
@@ -26,12 +26,14 @@ import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key-change-in-production',
-        signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as string | number,
-        },
-      }),
+      useFactory: (configService: ConfigService): JwtModuleOptions => {
+        return {
+          secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key-change-in-production',
+          signOptions: {
+            expiresIn: '7d',
+          },
+        };
+      },
     }),
   ],
   providers: [
