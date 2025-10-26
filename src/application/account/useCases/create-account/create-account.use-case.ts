@@ -4,7 +4,7 @@ import { IAccountRepository } from '@core/domain/repositories/account.repository
 import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
 import { IPlanRepository } from '@core/domain/repositories/plan.repository';
 import { Account } from '@core/domain/entities/account.entity';
-import { AccountLimitReachedException } from '@core/exceptions/account/account-limit-reached.exception';
+// import { AccountLimitReachedException } from '@core/exceptions/account/account-limit-reached.exception';
 import { SubscriptionInactiveException } from '@core/exceptions/subscription/subscription-inactive.exception';
 import { LoggerService } from '@infra/logging/logger.service';
 import { AccountType } from '@core/enum/account-type.enum';
@@ -38,7 +38,7 @@ export interface CreateAccountOutput {
  */
 @Injectable()
 export class CreateAccountUseCase implements IUseCase<CreateAccountInput, CreateAccountOutput> {
-  private readonly FREE_PLAN_ACCOUNT_LIMIT = 2;
+  // private readonly FREE_PLAN_ACCOUNT_LIMIT = 2;
 
   constructor(
     @Inject('IAccountRepository')
@@ -66,16 +66,16 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
       throw new SubscriptionInactiveException();
     }
 
-    // Get plan details
-    const plan = await this.planRepository.findById(subscription.plan_id);
+    // Get plan details (not used for now - all plans are premium)
+    // const plan = await this.planRepository.findById(subscription.plan_id);
 
-    // Check account limit (FREE plan only)
-    if (plan && plan.isFree()) {
-      const existingAccounts = await this.accountRepository.findByCoupleId(input.coupleId);
-      if (existingAccounts.length >= this.FREE_PLAN_ACCOUNT_LIMIT) {
-        throw new AccountLimitReachedException(this.FREE_PLAN_ACCOUNT_LIMIT);
-      }
-    }
+    // Check account limit (FREE plan only) - DISABLED FOR PREMIUM
+    // if (plan && plan.isFree()) {
+    //   const existingAccounts = await this.accountRepository.findByCoupleId(input.coupleId);
+    //   if (existingAccounts.length >= this.FREE_PLAN_ACCOUNT_LIMIT) {
+    //     throw new AccountLimitReachedException(this.FREE_PLAN_ACCOUNT_LIMIT);
+    //   }
+    // }
 
     // Create account
     const account = new Account({
