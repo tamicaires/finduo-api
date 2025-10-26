@@ -5,13 +5,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import express, { Express } from 'express';
 import { AppModule } from '../src/app.module';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-let cachedServer: express.Express;
+let cachedServer: Express;
 
-async function bootstrap(): Promise<express.Express> {
+async function bootstrap(): Promise<Express> {
   if (cachedServer) {
     return cachedServer;
   }
