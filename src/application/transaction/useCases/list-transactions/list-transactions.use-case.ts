@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { Transaction } from '@core/domain/entities/transaction.entity';
@@ -52,6 +52,8 @@ export class ListTransactionsUseCase
   implements IUseCase<ListTransactionsInput, ListTransactionsOutput>
 {
   constructor(
+    @Inject('ITransactionRepository')
+
     private readonly transactionRepository: ITransactionRepository,
     private readonly logger: LoggerService,
   ) {}

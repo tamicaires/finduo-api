@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
@@ -41,8 +41,14 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
   private readonly FREE_PLAN_ACCOUNT_LIMIT = 2;
 
   constructor(
+    @Inject('IAccountRepository')
+
     private readonly accountRepository: IAccountRepository,
+    @Inject('ISubscriptionRepository')
+
     private readonly subscriptionRepository: ISubscriptionRepository,
+    @Inject('IPlanRepository')
+
     private readonly planRepository: IPlanRepository,
     private readonly logger: LoggerService,
   ) {}

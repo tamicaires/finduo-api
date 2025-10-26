@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IUserRepository } from '@core/domain/repositories/user.repository';
@@ -34,6 +34,7 @@ export interface SignInOutput {
 @Injectable()
 export class SignInUseCase implements IUseCase<SignInInput, SignInOutput> {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
     private readonly logger: LoggerService,

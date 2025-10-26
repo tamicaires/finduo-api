@@ -1,0 +1,8 @@
+{
+  "welcome": "Welcome",
+  "error": {
+    "not_found": "Resource not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access denied"
+  }
+}

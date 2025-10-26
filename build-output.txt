@@ -1,0 +1,6 @@
+
+> finduo@0.0.1 build
+> nest build
+
+Found 57 error(s).
+

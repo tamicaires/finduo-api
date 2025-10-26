@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
@@ -55,7 +55,11 @@ export class RegisterTransactionUseCase
   implements IUseCase<RegisterTransactionInput, RegisterTransactionOutput>
 {
   constructor(
+    @Inject('IAccountRepository')
+
     private readonly accountRepository: IAccountRepository,
+    @Inject('ICoupleRepository')
+
     private readonly coupleRepository: ICoupleRepository,
     private readonly unitOfWork: UnitOfWork,
     private readonly eventEmitter: EventEmitter2,

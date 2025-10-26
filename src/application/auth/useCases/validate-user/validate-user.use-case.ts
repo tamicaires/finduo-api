@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IUserRepository } from '@core/domain/repositories/user.repository';
 import { User } from '@core/domain/entities/user.entity';
@@ -25,6 +25,7 @@ export type ValidateUserOutput = User | null;
 @Injectable()
 export class ValidateUserUseCase implements IUseCase<ValidateUserInput, ValidateUserOutput> {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly logger: LoggerService,
   ) {}

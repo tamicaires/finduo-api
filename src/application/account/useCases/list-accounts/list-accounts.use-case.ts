@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { LoggerService } from '@infra/logging/logger.service';
@@ -32,6 +32,8 @@ export interface ListAccountsOutput {
 @Injectable()
 export class ListAccountsUseCase implements IUseCase<ListAccountsInput, ListAccountsOutput> {
   constructor(
+    @Inject('IAccountRepository')
+
     private readonly accountRepository: IAccountRepository,
     private readonly logger: LoggerService,
   ) {}

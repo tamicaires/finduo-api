@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { IPlanRepository } from '@core/domain/repositories/plan.repository';
@@ -51,7 +51,9 @@ export class CreateCoupleUseCase implements IUseCase<CreateCoupleInput, CreateCo
   private readonly TRIAL_DAYS = 30;
 
   constructor(
+    @Inject('ICoupleRepository')
     private readonly coupleRepository: ICoupleRepository,
+    @Inject('IPlanRepository')
     private readonly planRepository: IPlanRepository,
     private readonly unitOfWork: UnitOfWork,
     private readonly logger: LoggerService,

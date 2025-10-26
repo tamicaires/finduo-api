@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
@@ -58,8 +58,14 @@ export class GetCoupleDashboardUseCase
   implements IUseCase<GetCoupleDashboardInput, GetCoupleDashboardOutput>
 {
   constructor(
+    @Inject('ICoupleRepository')
+
     private readonly coupleRepository: ICoupleRepository,
+    @Inject('IAccountRepository')
+
     private readonly accountRepository: IAccountRepository,
+    @Inject('ITransactionRepository')
+
     private readonly transactionRepository: ITransactionRepository,
     private readonly logger: LoggerService,
   ) {}

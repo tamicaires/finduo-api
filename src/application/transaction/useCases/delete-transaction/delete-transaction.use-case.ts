@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
@@ -34,6 +34,8 @@ export class DeleteTransactionUseCase
   implements IUseCase<DeleteTransactionInput, DeleteTransactionOutput>
 {
   constructor(
+    @Inject('ITransactionRepository')
+
     private readonly transactionRepository: ITransactionRepository,
     private readonly unitOfWork: UnitOfWork,
     private readonly eventEmitter: EventEmitter2,

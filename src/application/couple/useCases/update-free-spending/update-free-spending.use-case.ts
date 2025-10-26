@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { CoupleNotFoundException } from '@core/exceptions/couple/couple-not-found.exception';
@@ -33,6 +33,8 @@ export class UpdateFreeSpendingUseCase
   implements IUseCase<UpdateFreeSpendingInput, UpdateFreeSpendingOutput>
 {
   constructor(
+    @Inject('ICoupleRepository')
+
     private readonly coupleRepository: ICoupleRepository,
     private readonly logger: LoggerService,
   ) {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { AccountNotFoundException } from '@core/exceptions/account/account-not-found.exception';
@@ -28,6 +28,8 @@ export interface DeleteAccountOutput {
 @Injectable()
 export class DeleteAccountUseCase implements IUseCase<DeleteAccountInput, DeleteAccountOutput> {
   constructor(
+    @Inject('IAccountRepository')
+
     private readonly accountRepository: IAccountRepository,
     private readonly logger: LoggerService,
   ) {}

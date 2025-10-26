@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IUserRepository } from '@core/domain/repositories/user.repository';
 import { User } from '@core/domain/entities/user.entity';
@@ -34,6 +34,7 @@ export class SignUpUseCase implements IUseCase<SignUpInput, SignUpOutput> {
   private readonly SALT_ROUNDS = 10;
 
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly logger: LoggerService,
   ) {}
