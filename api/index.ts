@@ -1,22 +1,23 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
-import { AppModule } from '../src/app.module';
+const { NestFactory } = require('@nestjs/core');
+const { ValidationPipe } = require('@nestjs/common');
+const { SwaggerModule, DocumentBuilder } = require('@nestjs/swagger');
+const { ExpressAdapter } = require('@nestjs/platform-express');
+const express = require('express');
 
-let cachedApp: any;
+let server: any;
 
 async function bootstrap() {
-  if (cachedApp) {
-    return cachedApp;
+  if (server) {
+    return server;
   }
 
+  // Dynamic import do AppModule
+  const { AppModule } = await import('../src/app.module');
+
   const expressApp = express();
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(expressApp),
-  );
+  const adapter = new ExpressAdapter(expressApp);
+
+  const app = await NestFactory.create(AppModule, adapter);
 
   // CORS configuration
   app.enableCors({
@@ -51,11 +52,11 @@ async function bootstrap() {
 
   await app.init();
 
-  cachedApp = expressApp;
-  return expressApp;
+  server = expressApp;
+  return server;
 }
 
-export default async function handler(req: any, res: any) {
+module.exports = async (req: any, res: any) => {
   const app = await bootstrap();
-  return app(req, res);
-}
+  app(req, res);
+};
