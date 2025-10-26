@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
-import { IPlanRepository } from '@core/domain/repositories/plan.repository';
 import { Account } from '@core/domain/entities/account.entity';
 // import { AccountLimitReachedException } from '@core/exceptions/account/account-limit-reached.exception';
 import { SubscriptionInactiveException } from '@core/exceptions/subscription/subscription-inactive.exception';
@@ -42,14 +41,9 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
 
   constructor(
     @Inject('IAccountRepository')
-
     private readonly accountRepository: IAccountRepository,
     @Inject('ISubscriptionRepository')
-
     private readonly subscriptionRepository: ISubscriptionRepository,
-    @Inject('IPlanRepository')
-
-    private readonly planRepository: IPlanRepository,
     private readonly logger: LoggerService,
   ) {}
 
