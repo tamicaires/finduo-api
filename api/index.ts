@@ -1,23 +1,24 @@
-const { NestFactory } = require('@nestjs/core');
-const { ValidationPipe } = require('@nestjs/common');
-const { SwaggerModule, DocumentBuilder } = require('@nestjs/swagger');
-const { ExpressAdapter } = require('@nestjs/platform-express');
-const express = require('express');
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as express from 'express';
+import { AppModule } from '../src/app.module';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-let server: any;
+let cachedServer: express.Express;
 
-async function bootstrap() {
-  if (server) {
-    return server;
+async function bootstrap(): Promise<express.Express> {
+  if (cachedServer) {
+    return cachedServer;
   }
-
-  // Dynamic import do AppModule
-  const { AppModule } = await import('../src/app.module');
 
   const expressApp = express();
   const adapter = new ExpressAdapter(expressApp);
 
-  const app = await NestFactory.create(AppModule, adapter);
+  const app = await NestFactory.create(AppModule, adapter, {
+    logger: ['error', 'warn'],
+  });
 
   // CORS configuration
   app.enableCors({
@@ -52,11 +53,22 @@ async function bootstrap() {
 
   await app.init();
 
-  server = expressApp;
-  return server;
+  cachedServer = expressApp;
+  return expressApp;
 }
 
-module.exports = async (req: any, res: any) => {
-  const app = await bootstrap();
-  app(req, res);
-};
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse,
+): Promise<void> {
+  try {
+    const server = await bootstrap();
+    server(req as any, res as any);
+  } catch (error) {
+    console.error('Error in serverless function:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
