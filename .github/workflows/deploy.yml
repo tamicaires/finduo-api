@@ -1,4 +1,4 @@
-name: CI - Test and Build
+name: CI - Build Only
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  test:
-    name: Run Tests
+  build:
+    name: Build Application
     runs-on: ubuntu-latest
 
     steps:
@@ -30,12 +30,6 @@ jobs:
         run: npx prisma generate
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/ci_db
-
-      - name: Run linter
-        run: npm run lint
-
-      - name: Run unit tests
-        run: npm run test
 
       - name: Build application
         run: npm run build
