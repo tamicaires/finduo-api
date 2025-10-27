@@ -7,6 +7,7 @@ import { LoggingModule } from '@infra/logging/logging.module';
 import { RegisterTransactionUseCase } from './useCases/register-transaction/register-transaction.use-case';
 import { ListTransactionsUseCase } from './useCases/list-transactions/list-transactions.use-case';
 import { DeleteTransactionUseCase } from './useCases/delete-transaction/delete-transaction.use-case';
+import { UpdateFreeSpendingUseCase } from './useCases/update-free-spending/update-free-spending.use-case';
 
 // Repositories
 import { PrismaTransactionRepository } from '@infra/database/prisma/repositories/prisma-transaction.repository';
@@ -20,6 +21,7 @@ import { PrismaCoupleRepository } from '@infra/database/prisma/repositories/pris
     RegisterTransactionUseCase,
     ListTransactionsUseCase,
     DeleteTransactionUseCase,
+    UpdateFreeSpendingUseCase,
 
     // Repositories
     {
@@ -39,6 +41,7 @@ import { PrismaCoupleRepository } from '@infra/database/prisma/repositories/pris
     RegisterTransactionUseCase,
     ListTransactionsUseCase,
     DeleteTransactionUseCase,
+    UpdateFreeSpendingUseCase,
   ],
 })
 export class TransactionModule {}

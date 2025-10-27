@@ -1,9 +1,11 @@
-import { Controller, Post, Get, Delete, Body, Param, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Patch, Body, Param, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RegisterTransactionUseCase } from '@application/transaction/useCases/register-transaction/register-transaction.use-case';
 import { ListTransactionsUseCase } from '@application/transaction/useCases/list-transactions/list-transactions.use-case';
 import { DeleteTransactionUseCase } from '@application/transaction/useCases/delete-transaction/delete-transaction.use-case';
+import { UpdateFreeSpendingUseCase } from '@application/transaction/useCases/update-free-spending/update-free-spending.use-case';
 import { RegisterTransactionDto } from '../dtos/transaction/register-transaction.dto';
+import { UpdateFreeSpendingDto } from '../dtos/transaction/update-free-spending.dto';
 import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
 import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
 import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
@@ -19,6 +21,7 @@ export class TransactionController {
     private readonly registerTransactionUseCase: RegisterTransactionUseCase,
     private readonly listTransactionsUseCase: ListTransactionsUseCase,
     private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
+    private readonly updateFreeSpendingUseCase: UpdateFreeSpendingUseCase,
   ) {}
 
   @Post()
@@ -130,6 +133,34 @@ export class TransactionController {
       startDate: startDate ? new Date(startDate) : undefined,
       endDate: endDate ? new Date(endDate) : undefined,
       search,
+    });
+  }
+
+  @Patch(':id/free-spending')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update transaction free spending flag' })
+  @ApiParam({
+    name: 'id',
+    description: 'Transaction ID',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Free spending flag updated successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
+  })
+  async updateFreeSpending(
+    @CoupleId() coupleId: string,
+    @Param('id') transactionId: string,
+    @Body() dto: UpdateFreeSpendingDto,
+  ) {
+    return this.updateFreeSpendingUseCase.execute({
+      coupleId,
+      transactionId,
+      is_free_spending: dto.is_free_spending,
     });
   }
 
