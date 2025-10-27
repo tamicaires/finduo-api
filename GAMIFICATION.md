@@ -17,15 +17,16 @@ Tornar o controle financeiro do casal mais divertido, engajador e motivador atra
 
 #### 1.1 Sistema de XP e Níveis
 **Backend:**
-- [ ] Criar modelo `UserGameProfile` (XP, nível, total_xp)
-- [ ] Criar tabela no Prisma Schema
-- [ ] Migration para adicionar gamification
-- [ ] Repository para UserGameProfile
-- [ ] Use Case: CalculateXP
-- [ ] Use Case: GetUserGameProfile
-- [ ] Use Case: AwardXP (genérico para dar XP)
+- [x] Criar modelo `UserGameProfile` (XP, nível, total_xp)
+- [x] Criar tabela no Prisma Schema
+- [x] Migration para adicionar gamification
+- [x] Repository para UserGameProfile
+- [x] Use Case: GetUserGameProfile
+- [x] Use Case: AwardXP (genérico para dar XP)
+- [x] Lógica de cálculo de níveis (fórmula exponencial)
+- [x] Controller e rotas REST para gamification
 - [ ] Eventos de XP (ao registrar transação, bater meta, etc)
-- [ ] Lógica de cálculo de níveis (fórmula exponencial)
+- [ ] Hook para dar XP automaticamente em ações do usuário
 
 **Frontend:**
 - [ ] Componente XPBar (barra de progresso)
