@@ -55,7 +55,10 @@ export class UpdateCoupleSettingsUseCase
     couple.updated_at = new Date();
 
     // Save
-    await this.coupleRepository.update(couple);
+    const updated = await this.coupleRepository.update(couple.id, {
+      reset_day: couple.reset_day,
+      updated_at: couple.updated_at,
+    });
 
     this.logger.log(`Couple ${input.coupleId} settings updated successfully`);
 

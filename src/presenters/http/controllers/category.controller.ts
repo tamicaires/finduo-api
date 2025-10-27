@@ -12,8 +12,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
-import { CoupleGuard } from '../guards/couple.guard';
-import { CoupleId } from '../decorators/couple-id.decorator';
+import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
+import { CoupleId } from '@infra/http/auth/decorators/couple-id.decorator';
 import { CreateCategoryDto } from '../dtos/category/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/category/update-category.dto';
 import { CreateCategoryUseCase } from '@application/category/useCases/create-category/create-category.use-case';
