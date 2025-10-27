@@ -115,12 +115,15 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async update(id: string, data: Partial<Transaction>): Promise<Transaction> {
     const coupleId = this.tenant.getCoupleId();
 
+    // Remove fields that cannot be updated
+    const { couple_id, id: _id, created_at, ...updateData } = data;
+
     const updated = await this.prisma.transaction.update({
       where: {
         id,
         couple_id: coupleId,
       },
-      data,
+      data: updateData,
     });
 
     return PrismaTransactionMapper.toDomain(updated);
