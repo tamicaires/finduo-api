@@ -26,8 +26,32 @@ model User {
   couple_as_b   Couple?  @relation("UserB")
 
   transactions_paid Transaction[] @relation("PaidBy")
+  game_profile      UserGameProfile?
 
   @@map("users")
+}
+
+// ============================================
+// GAMIFICATION ENTITIES
+// ============================================
+
+model UserGameProfile {
+  id               String   @id @default(uuid())
+  user_id          String   @unique
+  current_xp       Int      @default(0)
+  total_xp         Int      @default(0)
+  level            Int      @default(1)
+  current_streak   Int      @default(0)
+  longest_streak   Int      @default(0)
+  last_activity_at DateTime @default(now())
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("user_game_profiles")
 }
 
 model Couple {

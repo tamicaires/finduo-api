@@ -115,8 +115,17 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async update(id: string, data: Partial<Transaction>): Promise<Transaction> {
     const coupleId = this.tenant.getCoupleId();
 
-    // Remove fields that cannot be updated
-    const { couple_id, id: _id, created_at, ...updateData } = data;
+    // Only extract updatable fields (no methods, no immutable fields)
+    const updateData: any = {};
+    if (data.type !== undefined) updateData.type = data.type;
+    if (data.amount !== undefined) updateData.amount = data.amount;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.paid_by_id !== undefined) updateData.paid_by_id = data.paid_by_id;
+    if (data.account_id !== undefined) updateData.account_id = data.account_id;
+    if (data.is_free_spending !== undefined) updateData.is_free_spending = data.is_free_spending;
+    if (data.is_couple_expense !== undefined) updateData.is_couple_expense = data.is_couple_expense;
+    if (data.category !== undefined) updateData.category_id = data.category;
+    if (data.transaction_date !== undefined) updateData.transaction_date = data.transaction_date;
 
     const updated = await this.prisma.transaction.update({
       where: {
