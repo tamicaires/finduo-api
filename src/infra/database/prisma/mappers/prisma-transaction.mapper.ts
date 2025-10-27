@@ -19,7 +19,7 @@ export class PrismaTransactionMapper {
       account_id: prismaTransaction.account_id,
       is_free_spending: prismaTransaction.is_free_spending,
       is_couple_expense: prismaTransaction.is_couple_expense,
-      category: prismaTransaction.category,
+      category: prismaTransaction.category_id,
       transaction_date: prismaTransaction.transaction_date,
       created_at: prismaTransaction.created_at,
     });
@@ -36,7 +36,7 @@ export class PrismaTransactionMapper {
       account_id: transaction.account_id,
       is_free_spending: transaction.is_free_spending,
       is_couple_expense: transaction.is_couple_expense,
-      category: transaction.category,
+      category_id: transaction.category,
       transaction_date: transaction.transaction_date,
     };
   }
