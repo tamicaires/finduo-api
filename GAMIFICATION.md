@@ -29,8 +29,11 @@ Tornar o controle financeiro do casal mais divertido, engajador e motivador atra
 - [ ] Hook para dar XP automaticamente em ações do usuário
 
 **Frontend:**
-- [ ] Componente XPBar (barra de progresso)
-- [ ] Badge de Nível no header/perfil
+- [x] Componente XPBar (barra de progresso)
+- [x] Badge de Nível (LevelBadge com ícones e cores)
+- [x] GamificationCard integrado na Dashboard
+- [x] Hook useGameProfile para buscar dados
+- [x] Indicador de streak com chamas
 - [ ] Animação de ganho de XP
 - [ ] Som/feedback visual ao ganhar XP
 - [ ] Página de perfil com estatísticas de jogo
