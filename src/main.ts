@@ -7,7 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:5173'],
+    origin: [
+      'http://localhost:5173',
+      'http://192.168.0.190:5173', // IP local para acesso mobile
+      /^http:\/\/192\.168\.\d+\.\d+:5173$/, // Qualquer IP da rede local
+    ],
     credentials: true,
   });
 
