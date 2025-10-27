@@ -52,20 +52,18 @@ export class UpdateCoupleSettingsUseCase
       couple.reset_day = input.reset_day;
     }
 
-    couple.updated_at = new Date();
-
     // Save
     const updated = await this.coupleRepository.update(couple.id, {
       reset_day: couple.reset_day,
-      updated_at: couple.updated_at,
+      updated_at: new Date(),
     });
 
     this.logger.log(`Couple ${input.coupleId} settings updated successfully`);
 
     return {
-      id: couple.id,
-      reset_day: couple.reset_day,
-      updated_at: couple.updated_at,
+      id: updated.id,
+      reset_day: updated.reset_day,
+      updated_at: updated.updated_at,
     };
   }
 }
