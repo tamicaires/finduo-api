@@ -11,6 +11,7 @@ export interface TransactionFilters {
   startDate?: Date;
   endDate?: Date;
   isCoupleExpense?: boolean;
+  search?: string;
 }
 
 export interface MonthlyStats {

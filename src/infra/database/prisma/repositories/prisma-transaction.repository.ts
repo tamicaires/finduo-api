@@ -79,6 +79,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       if (filters.endDate) where.transaction_date.lte = filters.endDate;
     }
 
+    if (filters.search) {
+      where.description = {
+        contains: filters.search,
+        mode: 'insensitive',
+      };
+    }
+
     const transactions = await this.prisma.transaction.findMany({
       where,
       take: limit + 1,

@@ -56,7 +56,7 @@ export class TransactionController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'List transactions with pagination' })
+  @ApiOperation({ summary: 'List transactions with pagination and filters' })
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -69,6 +69,42 @@ export class TransactionController {
     type: String,
     description: 'Cursor for pagination',
   })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    enum: ['INCOME', 'EXPENSE'],
+    description: 'Filter by transaction type',
+  })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    type: String,
+    description: 'Filter by category',
+  })
+  @ApiQuery({
+    name: 'account_id',
+    required: false,
+    type: String,
+    description: 'Filter by account ID',
+  })
+  @ApiQuery({
+    name: 'start_date',
+    required: false,
+    type: String,
+    description: 'Filter by start date (ISO format)',
+  })
+  @ApiQuery({
+    name: 'end_date',
+    required: false,
+    type: String,
+    description: 'Filter by end date (ISO format)',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search in description',
+  })
   @ApiResponse({
     status: 200,
     description: 'Transactions retrieved successfully',
@@ -77,11 +113,23 @@ export class TransactionController {
     @CoupleId() coupleId: string,
     @Query('limit') limit?: number,
     @Query('cursor') cursor?: string,
+    @Query('type') type?: string,
+    @Query('category') category?: string,
+    @Query('account_id') accountId?: string,
+    @Query('start_date') startDate?: string,
+    @Query('end_date') endDate?: string,
+    @Query('search') search?: string,
   ) {
     return this.listTransactionsUseCase.execute({
       coupleId,
       limit: limit ? Number(limit) : undefined,
       cursor,
+      type,
+      category,
+      accountId,
+      startDate: startDate ? new Date(startDate) : undefined,
+      endDate: endDate ? new Date(endDate) : undefined,
+      search,
     });
   }
 

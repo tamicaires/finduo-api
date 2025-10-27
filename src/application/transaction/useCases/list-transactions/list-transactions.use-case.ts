@@ -4,19 +4,17 @@ import { ITransactionRepository } from '@core/domain/repositories/transaction.re
 import { Transaction } from '@core/domain/entities/transaction.entity';
 import { LoggerService } from '@infra/logging/logger.service';
 import { TransactionType } from '@core/enum/transaction-type.enum';
-import { TransactionCategory } from '@core/enum/transaction-category.enum';
 
 export interface ListTransactionsInput {
   coupleId: string;
   limit?: number;
   cursor?: string;
-  filters?: {
-    type?: TransactionType;
-    category?: TransactionCategory;
-    is_free_spending?: boolean;
-    start_date?: Date;
-    end_date?: Date;
-  };
+  type?: string;
+  category?: string;
+  accountId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  search?: string;
 }
 
 export interface ListTransactionsOutput {
@@ -62,13 +60,24 @@ export class ListTransactionsUseCase
     this.logger.logUseCase('ListTransactionsUseCase', {
       coupleId: input.coupleId,
       limit: input.limit,
+      filters: {
+        type: input.type,
+        category: input.category,
+        accountId: input.accountId,
+        search: input.search,
+      },
     });
 
-    // Get transactions with pagination
+    // Get transactions with pagination and filters
     const result = await this.transactionRepository.findByFilters(
       {
         coupleId: input.coupleId,
-        ...input.filters,
+        type: input.type as TransactionType | undefined,
+        category: input.category,
+        accountId: input.accountId,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        search: input.search,
       },
       {
         limit: input.limit || 50,
