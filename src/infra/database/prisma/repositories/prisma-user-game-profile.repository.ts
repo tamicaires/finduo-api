@@ -44,21 +44,22 @@ export class PrismaUserGameProfileRepository implements IUserGameProfileReposito
   }
 
   async findOrCreate(userId: string): Promise<UserGameProfile> {
-    const existing = await this.findByUserId(userId);
-    if (existing) return existing;
-
-    // Criar novo perfil com valores padrão
-    const newProfile = new UserGameProfile({
-      user_id: userId,
-      current_xp: 0,
-      total_xp: 0,
-      level: 1,
-      current_streak: 0,
-      longest_streak: 0,
-      last_activity_at: new Date(),
+    // Usar upsert do Prisma para evitar race conditions
+    const profile = await this.prisma.userGameProfile.upsert({
+      where: { user_id: userId },
+      update: {}, // Não atualiza nada se já existir
+      create: {
+        user_id: userId,
+        current_xp: 0,
+        total_xp: 0,
+        level: 1,
+        current_streak: 0,
+        longest_streak: 0,
+        last_activity_at: new Date(),
+      },
     });
 
-    return await this.create(newProfile);
+    return this.toDomain(profile);
   }
 
   private toDomain(prisma: PrismaUserGameProfile): UserGameProfile {
