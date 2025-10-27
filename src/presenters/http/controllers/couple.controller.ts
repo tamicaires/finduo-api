@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Put, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateCoupleUseCase } from '@application/couple/useCases/create-couple/create-couple.use-case';
 import { GetCoupleDashboardUseCase } from '@application/couple/useCases/get-couple-dashboard/get-couple-dashboard.use-case';
 import { GetCoupleInfoUseCase } from '@application/couple/useCases/get-couple-info/get-couple-info.use-case';
 import { UpdateFreeSpendingUseCase } from '@application/couple/useCases/update-free-spending/update-free-spending.use-case';
+import { UpdateCoupleSettingsUseCase } from '@application/couple/useCases/update-couple-settings/update-couple-settings.use-case';
 import { CreateCoupleDto } from '../dtos/couple/create-couple.dto';
 import { UpdateFreeSpendingDto } from '../dtos/couple/update-free-spending.dto';
+import { UpdateCoupleSettingsDto } from '../dtos/couple/update-couple-settings.dto';
 import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
 import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
 import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
@@ -22,6 +24,7 @@ export class CoupleController {
     private readonly getCoupleDashboardUseCase: GetCoupleDashboardUseCase,
     private readonly getCoupleInfoUseCase: GetCoupleInfoUseCase,
     private readonly updateFreeSpendingUseCase: UpdateFreeSpendingUseCase,
+    private readonly updateCoupleSettingsUseCase: UpdateCoupleSettingsUseCase,
   ) {}
 
   @Post()
@@ -104,6 +107,28 @@ export class CoupleController {
       coupleId,
       userId: user.id,
       newMonthlyAmount: dto.new_monthly_amount,
+    });
+  }
+
+  @Patch('settings')
+  @UseGuards(CoupleGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update couple settings' })
+  @ApiResponse({
+    status: 200,
+    description: 'Couple settings updated successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Couple not found',
+  })
+  async updateSettings(
+    @CoupleId() coupleId: string,
+    @Body() dto: UpdateCoupleSettingsDto,
+  ) {
+    return this.updateCoupleSettingsUseCase.execute({
+      coupleId,
+      reset_day: dto.reset_day,
     });
   }
 }

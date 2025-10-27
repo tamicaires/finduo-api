@@ -7,6 +7,7 @@ import { CreateCoupleUseCase } from './useCases/create-couple/create-couple.use-
 import { GetCoupleDashboardUseCase } from './useCases/get-couple-dashboard/get-couple-dashboard.use-case';
 import { GetCoupleInfoUseCase } from './useCases/get-couple-info/get-couple-info.use-case';
 import { UpdateFreeSpendingUseCase } from './useCases/update-free-spending/update-free-spending.use-case';
+import { UpdateCoupleSettingsUseCase } from './useCases/update-couple-settings/update-couple-settings.use-case';
 
 // Repositories
 import { PrismaCoupleRepository } from '@infra/database/prisma/repositories/prisma-couple.repository';
@@ -24,6 +25,7 @@ import { PrismaPlanRepository } from '@infra/database/prisma/repositories/prisma
     GetCoupleDashboardUseCase,
     GetCoupleInfoUseCase,
     UpdateFreeSpendingUseCase,
+    UpdateCoupleSettingsUseCase,
 
     // Repositories
     {
@@ -56,6 +58,7 @@ import { PrismaPlanRepository } from '@infra/database/prisma/repositories/prisma
     GetCoupleDashboardUseCase,
     GetCoupleInfoUseCase,
     UpdateFreeSpendingUseCase,
+    UpdateCoupleSettingsUseCase,
   ],
 })
 export class CoupleModule {}
