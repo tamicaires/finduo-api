@@ -5,8 +5,6 @@ import { GetUserGameProfileUseCase } from './use-cases/get-user-game-profile.use
 import { AwardXPUseCase } from './use-cases/award-xp.use-case';
 import { GetCoupleRankingUseCase } from './use-cases/get-couple-ranking.use-case';
 import { PrismaUserGameProfileRepository } from '@infra/database/prisma/repositories/prisma-user-game-profile.repository';
-import { PrismaCoupleRepository } from '@infra/database/prisma/repositories/prisma-couple.repository';
-import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma-user.repository';
 
 @Module({
   imports: [DatabaseModule, LoggingModule],
@@ -17,14 +15,6 @@ import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma
     {
       provide: 'IUserGameProfileRepository',
       useClass: PrismaUserGameProfileRepository,
-    },
-    {
-      provide: 'ICoupleRepository',
-      useClass: PrismaCoupleRepository,
-    },
-    {
-      provide: 'IUserRepository',
-      useClass: PrismaUserRepository,
     },
   ],
   exports: [GetUserGameProfileUseCase, AwardXPUseCase, GetCoupleRankingUseCase],
