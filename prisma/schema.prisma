@@ -55,6 +55,7 @@ model Couple {
 
   accounts     Account[]
   transactions Transaction[]
+  categories   Category[]
   subscription Subscription?
 
   @@map("couples")
@@ -132,6 +133,25 @@ enum AccountType {
   CREDIT_CARD
 }
 
+model Category {
+  id          String   @id @default(uuid())
+  couple_id   String   // FK - Tenant Isolation
+  name        String
+  icon        String   @default("Circle") // Lucide icon name
+  color       String   @default("#6b7280") // Hex color
+  type        TransactionType? // null = both types
+  is_default  Boolean  @default(false) // System default categories
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  couple       Couple        @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([couple_id])
+  @@map("categories")
+}
+
 model Transaction {
   id                String          @id @default(uuid())
   couple_id         String          // FK - Tenant Isolation
@@ -142,18 +162,20 @@ model Transaction {
   account_id        String          // Source/destination account
   is_couple_expense Boolean         @default(false) // Joint expense or individual
   is_free_spending  Boolean         @default(false) // Deduct from free spending allowance
-  category          String?
+  category_id       String?         // FK to Category
   transaction_date  DateTime        @default(now())
   created_at        DateTime        @default(now())
 
   // Relations
-  couple  Couple  @relation(fields: [couple_id], references: [id], onDelete: Cascade)
-  paid_by User    @relation("PaidBy", fields: [paid_by_id], references: [id])
-  account Account @relation(fields: [account_id], references: [id])
+  couple   Couple    @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  paid_by  User      @relation("PaidBy", fields: [paid_by_id], references: [id])
+  account  Account   @relation(fields: [account_id], references: [id])
+  category Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
 
   @@index([couple_id])
   @@index([paid_by_id])
   @@index([transaction_date])
+  @@index([category_id])
   @@map("transactions")
 }
 
