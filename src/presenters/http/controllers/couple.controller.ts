@@ -2,6 +2,7 @@ import { Controller, Post, Get, Put, Body, UseGuards, HttpCode, HttpStatus } fro
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateCoupleUseCase } from '@application/couple/useCases/create-couple/create-couple.use-case';
 import { GetCoupleDashboardUseCase } from '@application/couple/useCases/get-couple-dashboard/get-couple-dashboard.use-case';
+import { GetCoupleInfoUseCase } from '@application/couple/useCases/get-couple-info/get-couple-info.use-case';
 import { UpdateFreeSpendingUseCase } from '@application/couple/useCases/update-free-spending/update-free-spending.use-case';
 import { CreateCoupleDto } from '../dtos/couple/create-couple.dto';
 import { UpdateFreeSpendingDto } from '../dtos/couple/update-free-spending.dto';
@@ -19,6 +20,7 @@ export class CoupleController {
   constructor(
     private readonly createCoupleUseCase: CreateCoupleUseCase,
     private readonly getCoupleDashboardUseCase: GetCoupleDashboardUseCase,
+    private readonly getCoupleInfoUseCase: GetCoupleInfoUseCase,
     private readonly updateFreeSpendingUseCase: UpdateFreeSpendingUseCase,
   ) {}
 
@@ -35,6 +37,28 @@ export class CoupleController {
   })
   async createCouple(@Body() dto: CreateCoupleDto) {
     return this.createCoupleUseCase.execute(dto);
+  }
+
+  @Get('info')
+  @UseGuards(CoupleGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get couple and partners information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Couple information retrieved successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Couple not found',
+  })
+  async getCoupleInfo(
+    @CoupleId() coupleId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.getCoupleInfoUseCase.execute({
+      coupleId,
+      userId: user.id,
+    });
   }
 
   @Get('dashboard')
