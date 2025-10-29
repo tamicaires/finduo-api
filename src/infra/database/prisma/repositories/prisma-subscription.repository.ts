@@ -112,6 +112,22 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     return subscriptions.map(PrismaSubscriptionMapper.toDomain);
   }
 
+  async findByStripeSubscriptionId(stripeSubscriptionId: string): Promise<Subscription | null> {
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { stripe_subscription_id: stripeSubscriptionId },
+    });
+
+    return subscription ? PrismaSubscriptionMapper.toDomain(subscription) : null;
+  }
+
+  async findByStripeCustomerId(stripeCustomerId: string): Promise<Subscription | null> {
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { stripe_customer_id: stripeCustomerId },
+    });
+
+    return subscription ? PrismaSubscriptionMapper.toDomain(subscription) : null;
+  }
+
   async updateStatus(id: string, status: SubscriptionStatus): Promise<void> {
     await this.prisma.subscription.update({
       where: { id },

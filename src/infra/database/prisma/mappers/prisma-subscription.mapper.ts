@@ -14,6 +14,9 @@ export class PrismaSubscriptionMapper {
       status: prismaSubscription.status as SubscriptionStatus,
       start_date: prismaSubscription.start_date,
       end_date: prismaSubscription.end_date,
+      stripe_customer_id: prismaSubscription.stripe_customer_id,
+      stripe_subscription_id: prismaSubscription.stripe_subscription_id,
+      stripe_price_id: prismaSubscription.stripe_price_id,
       created_at: prismaSubscription.created_at,
       updated_at: prismaSubscription.updated_at,
     });
@@ -27,6 +30,9 @@ export class PrismaSubscriptionMapper {
       status: subscription.status as PrismaSubscriptionStatus,
       start_date: subscription.start_date,
       end_date: subscription.end_date,
+      stripe_customer_id: subscription.stripe_customer_id || null,
+      stripe_subscription_id: subscription.stripe_subscription_id || null,
+      stripe_price_id: subscription.stripe_price_id || null,
     };
   }
 }

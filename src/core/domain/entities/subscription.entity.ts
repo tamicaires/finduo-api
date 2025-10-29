@@ -9,6 +9,9 @@ export class Subscription {
   status: SubscriptionStatus;
   start_date: Date;
   end_date: Date | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
   created_at: Date;
   updated_at: Date;
 
@@ -76,6 +79,9 @@ export const subscriptionSchema = z.object({
   status: z.nativeEnum(SubscriptionStatus).default(SubscriptionStatus.TRIAL),
   start_date: z.date().optional(),
   end_date: z.date().nullable().optional(),
+  stripe_customer_id: z.string().nullable().optional(),
+  stripe_subscription_id: z.string().nullable().optional(),
+  stripe_price_id: z.string().nullable().optional(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });

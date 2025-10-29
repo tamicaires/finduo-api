@@ -20,6 +20,10 @@ export interface ISubscriptionRepository {
   findExpiredSubscriptions(): Promise<Subscription[]>;
   findTrialEndingSoon(days: number): Promise<Subscription[]>;
 
+  // Stripe integration
+  findByStripeSubscriptionId(stripeSubscriptionId: string): Promise<Subscription | null>;
+  findByStripeCustomerId(stripeCustomerId: string): Promise<Subscription | null>;
+
   // Status operations
   updateStatus(id: string, status: SubscriptionStatus): Promise<void>;
   cancel(id: string): Promise<void>;
