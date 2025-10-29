@@ -7,3 +7,13 @@ dist
 
 # Logs
 logs/*.log
+
+# Temporary migration/test scripts
+*.sql
+check-categories.ts
+fix-category-mapping.ts
+seed-categories.ts
+update-all-passwords.ts
+update-categories-icons.ts
+create-missing-categories.ts
+update-achievements-icons.ts
