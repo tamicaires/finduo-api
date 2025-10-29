@@ -48,10 +48,43 @@ model UserGameProfile {
   updated_at       DateTime @updatedAt
 
   // Relations
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user         User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  achievements UserAchievement[]
 
   @@index([user_id])
   @@map("user_game_profiles")
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  key         String   @unique // e.g., "FIRST_TRANSACTION", "WEEK_STREAK"
+  name        String   // e.g., "Primeira Transação"
+  description String   // e.g., "Registre sua primeira transação"
+  icon        String   // emoji or icon name
+  xp_reward   Int      @default(0) // XP bonus when achieved
+  category    String   // e.g., "TRANSACTIONS", "STREAK", "BUDGET"
+  created_at  DateTime @default(now())
+
+  // Relations
+  user_achievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id             String   @id @default(uuid())
+  user_id        String
+  achievement_id String
+  achieved_at    DateTime @default(now())
+
+  // Relations
+  profile     UserGameProfile @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  achievement Achievement     @relation(fields: [achievement_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, achievement_id])
+  @@index([user_id])
+  @@index([achievement_id])
+  @@map("user_achievements")
 }
 
 model Couple {
@@ -112,6 +145,11 @@ model Subscription {
   end_date   DateTime?
   created_at DateTime           @default(now())
   updated_at DateTime           @updatedAt
+
+  // Stripe Integration
+  stripe_customer_id     String? @unique
+  stripe_subscription_id String? @unique
+  stripe_price_id        String?
 
   // Relations
   couple Couple @relation(fields: [couple_id], references: [id], onDelete: Cascade)

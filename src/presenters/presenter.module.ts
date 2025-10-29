@@ -5,6 +5,8 @@ import { AccountModule } from '@application/account/account.module';
 import { TransactionModule } from '@application/transaction/transaction.module';
 import { CategoryModule } from '@application/category/category.module';
 import { UserGameProfileModule } from '@application/user-game-profile/user-game-profile.module';
+import { AchievementModule } from '@application/achievement/achievement.module';
+import { PaymentModule } from '@infra/payment/payment.module';
 
 // Controllers
 import { AuthController } from './http/controllers/auth.controller';
@@ -13,6 +15,7 @@ import { AccountController } from './http/controllers/account.controller';
 import { TransactionController } from './http/controllers/transaction.controller';
 import { CategoryController } from './http/controllers/category.controller';
 import { UserGameProfileController } from './http/controllers/user-game-profile.controller';
+import { AchievementController } from './http/controllers/achievement.controller';
 
 @Module({
   imports: [
@@ -22,6 +25,8 @@ import { UserGameProfileController } from './http/controllers/user-game-profile.
     TransactionModule,
     CategoryModule,
     UserGameProfileModule,
+    AchievementModule,
+    PaymentModule,
   ],
   controllers: [
     AuthController,
@@ -30,6 +35,7 @@ import { UserGameProfileController } from './http/controllers/user-game-profile.
     TransactionController,
     CategoryController,
     UserGameProfileController,
+    AchievementController,
   ],
 })
 export class PresenterModule {}
