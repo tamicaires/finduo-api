@@ -50,7 +50,7 @@ export class TransactionController {
       account_id: dto.account_id,
       type: dto.type,
       amount: dto.amount,
-      category: dto.category,
+      category_id: dto.category_id,
       description: dto.description,
       transaction_date: dto.transaction_date,
       is_free_spending: dto.is_free_spending,

@@ -2,7 +2,6 @@ import { IsUUID, IsEnum, IsNumber, IsString, IsBoolean, IsOptional, IsDate, Min,
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { TransactionType } from '@core/enum/transaction-type.enum';
-import { TransactionCategory } from '@core/enum/transaction-category.enum';
 
 export class RegisterTransactionDto {
   @ApiProperty({
@@ -29,12 +28,13 @@ export class RegisterTransactionDto {
   amount: number;
 
   @ApiProperty({
-    example: TransactionCategory.GROCERIES,
-    enum: TransactionCategory,
-    description: 'Transaction category',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    description: 'Category ID',
+    required: false,
   })
-  @IsEnum(TransactionCategory)
-  category: TransactionCategory;
+  @IsOptional()
+  @IsUUID()
+  category_id?: string;
 
   @ApiProperty({
     example: 'Weekly groceries at supermarket',
