@@ -21,6 +21,9 @@ export interface GetCoupleInfoOutput {
     id: string;
     created_at: Date;
     reset_day: number;
+    financial_model: string;
+    allow_personal_accounts: boolean;
+    allow_private_transactions: boolean;
   };
   currentUser: UserInfo & {
     free_spending_monthly: number;
@@ -82,6 +85,9 @@ export class GetCoupleInfoUseCase
         id: couple.id,
         created_at: couple.created_at,
         reset_day: couple.reset_day,
+        financial_model: couple.financial_model,
+        allow_personal_accounts: couple.allow_personal_accounts,
+        allow_private_transactions: couple.allow_private_transactions,
       },
       currentUser: {
         id: currentUser.id,

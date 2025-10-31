@@ -103,6 +103,11 @@ model Couple {
   // Day of month to reset Free Spending (1-31)
   reset_day                 Int      @default(1)
 
+  // Financial Model Configuration
+  financial_model              FinancialModel @default(CUSTOM)
+  allow_personal_accounts      Boolean        @default(true)
+  allow_private_transactions   Boolean        @default(true)
+
   created_at                DateTime @default(now())
   updated_at                DateTime @updatedAt
 
@@ -215,18 +220,19 @@ model Category {
 }
 
 model Transaction {
-  id                String          @id @default(uuid())
-  couple_id         String          // FK - Tenant Isolation
+  id                String                @id @default(uuid())
+  couple_id         String                // FK - Tenant Isolation
   type              TransactionType
-  amount            Decimal         @db.Decimal(10, 2)
+  amount            Decimal               @db.Decimal(10, 2)
   description       String?
-  paid_by_id        String          // Who paid
-  account_id        String          // Source/destination account
-  is_couple_expense Boolean         @default(false) // Joint expense or individual
-  is_free_spending  Boolean         @default(false) // Deduct from free spending allowance
-  category_id       String?         // FK to Category
-  transaction_date  DateTime        @default(now())
-  created_at        DateTime        @default(now())
+  paid_by_id        String                // Who paid
+  account_id        String                // Source/destination account
+  is_couple_expense Boolean               @default(false) // Joint expense or individual
+  is_free_spending  Boolean               @default(false) // Deduct from free spending allowance
+  visibility        TransactionVisibility @default(SHARED) // SHARED, FREE_SPENDING, or PRIVATE
+  category_id       String?               // FK to Category
+  transaction_date  DateTime              @default(now())
+  created_at        DateTime              @default(now())
 
   // Relations
   couple   Couple    @relation(fields: [couple_id], references: [id], onDelete: Cascade)
@@ -244,4 +250,16 @@ model Transaction {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum TransactionVisibility {
+  SHARED         // 👥 Compartilhado - both partners see full details
+  FREE_SPENDING  // 💰 Gasto Pessoal - deducted from free spending allowance
+  PRIVATE        // 🔒 Privado - partner sees amount but not details
+}
+
+enum FinancialModel {
+  TRANSPARENT           // 🤝 Transparência Total - no personal accounts, no private transactions
+  AUTONOMOUS            // 🔀 Autonomia com Colaboração - allows personal accounts and private transactions
+  CUSTOM                // 💎 Personalizado - user configures individually
 }

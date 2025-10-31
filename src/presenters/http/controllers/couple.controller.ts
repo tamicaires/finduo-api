@@ -5,9 +5,11 @@ import { GetCoupleDashboardUseCase } from '@application/couple/useCases/get-coup
 import { GetCoupleInfoUseCase } from '@application/couple/useCases/get-couple-info/get-couple-info.use-case';
 import { UpdateFreeSpendingUseCase } from '@application/couple/useCases/update-free-spending/update-free-spending.use-case';
 import { UpdateCoupleSettingsUseCase } from '@application/couple/useCases/update-couple-settings/update-couple-settings.use-case';
+import { UpdateFinancialModelUseCase } from '@application/couple/useCases/update-financial-model/update-financial-model.use-case';
 import { CreateCoupleDto } from '../dtos/couple/create-couple.dto';
 import { UpdateFreeSpendingDto } from '../dtos/couple/update-free-spending.dto';
 import { UpdateCoupleSettingsDto } from '../dtos/couple/update-couple-settings.dto';
+import { UpdateFinancialModelDto } from '../dtos/couple/update-financial-model.dto';
 import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
 import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
 import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
@@ -25,6 +27,7 @@ export class CoupleController {
     private readonly getCoupleInfoUseCase: GetCoupleInfoUseCase,
     private readonly updateFreeSpendingUseCase: UpdateFreeSpendingUseCase,
     private readonly updateCoupleSettingsUseCase: UpdateCoupleSettingsUseCase,
+    private readonly updateFinancialModelUseCase: UpdateFinancialModelUseCase,
   ) {}
 
   @Post()
@@ -129,6 +132,35 @@ export class CoupleController {
     return this.updateCoupleSettingsUseCase.execute({
       coupleId,
       reset_day: dto.reset_day,
+    });
+  }
+
+  @Patch('financial-model')
+  @UseGuards(CoupleGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update couple financial model' })
+  @ApiResponse({
+    status: 200,
+    description: 'Financial model updated successfully',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'User does not belong to couple',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Couple not found',
+  })
+  async updateFinancialModel(
+    @CoupleId() coupleId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateFinancialModelDto,
+  ) {
+    return this.updateFinancialModelUseCase.execute({
+      coupleId,
+      userId: user.id,
+      financial_model: dto.financial_model,
+      reason: dto.reason,
     });
   }
 }

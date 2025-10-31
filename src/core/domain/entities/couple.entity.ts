@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
+import { FinancialModel } from '@prisma/client';
 
 export class Couple {
   id: string;
@@ -10,6 +11,9 @@ export class Couple {
   free_spending_a_remaining: number;
   free_spending_b_remaining: number;
   reset_day: number;
+  financial_model: FinancialModel;
+  allow_personal_accounts: boolean;
+  allow_private_transactions: boolean;
   created_at: Date;
   updated_at: Date;
 
@@ -74,6 +78,9 @@ export const coupleSchema = z.object({
   free_spending_a_remaining: z.number().min(0).default(0),
   free_spending_b_remaining: z.number().min(0).default(0),
   reset_day: z.number().int().min(1).max(31).default(1),
+  financial_model: z.nativeEnum(FinancialModel).default('CUSTOM'),
+  allow_personal_accounts: z.boolean().default(true),
+  allow_private_transactions: z.boolean().default(true),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });

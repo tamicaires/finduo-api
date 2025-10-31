@@ -17,6 +17,9 @@ export class PrismaCoupleMapper {
       free_spending_a_remaining: Number(prismaCouple.free_spending_a_remaining),
       free_spending_b_remaining: Number(prismaCouple.free_spending_b_remaining),
       reset_day: prismaCouple.reset_day,
+      financial_model: prismaCouple.financial_model,
+      allow_personal_accounts: prismaCouple.allow_personal_accounts,
+      allow_private_transactions: prismaCouple.allow_private_transactions,
       created_at: prismaCouple.created_at,
       updated_at: prismaCouple.updated_at,
     });
@@ -32,6 +35,9 @@ export class PrismaCoupleMapper {
       free_spending_a_remaining: new Prisma.Decimal(couple.free_spending_a_remaining),
       free_spending_b_remaining: new Prisma.Decimal(couple.free_spending_b_remaining),
       reset_day: couple.reset_day,
+      financial_model: couple.financial_model,
+      allow_personal_accounts: couple.allow_personal_accounts,
+      allow_private_transactions: couple.allow_private_transactions,
     };
   }
 }

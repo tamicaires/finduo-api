@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { Couple } from '@core/domain/entities/couple.entity';
 import { PrismaCoupleMapper } from '../mappers/prisma-couple.mapper';
+import { FinancialModel } from '@prisma/client';
 
 /**
  * Prisma Couple Repository
@@ -127,6 +128,24 @@ export class PrismaCoupleRepository implements ICoupleRepository {
       data: {
         free_spending_a_remaining: couple.free_spending_a_monthly,
         free_spending_b_remaining: couple.free_spending_b_monthly,
+      },
+    });
+  }
+
+  async updateFinancialModel(
+    coupleId: string,
+    data: {
+      financial_model: FinancialModel;
+      allow_personal_accounts: boolean;
+      allow_private_transactions: boolean;
+    },
+  ): Promise<void> {
+    await this.prisma.couple.update({
+      where: { id: coupleId },
+      data: {
+        financial_model: data.financial_model,
+        allow_personal_accounts: data.allow_personal_accounts,
+        allow_private_transactions: data.allow_private_transactions,
       },
     });
   }

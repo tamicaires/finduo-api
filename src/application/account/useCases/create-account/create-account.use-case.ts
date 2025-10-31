@@ -1,7 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
 import { ISubscriptionRepository } from '@core/domain/repositories/subscription.repository';
+import { ICoupleRepository } from '@core/domain/repositories/couple.repository';
 import { Account } from '@core/domain/entities/account.entity';
 // import { AccountLimitReachedException } from '@core/exceptions/account/account-limit-reached.exception';
 import { SubscriptionInactiveException } from '@core/exceptions/subscription/subscription-inactive.exception';
@@ -13,6 +14,7 @@ export interface CreateAccountInput {
   name: string;
   type: AccountType;
   initial_balance?: number;
+  owner_id?: string | null; // null = joint account, string = personal account
 }
 
 export interface CreateAccountOutput {
@@ -44,6 +46,8 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
     private readonly accountRepository: IAccountRepository,
     @Inject('ISubscriptionRepository')
     private readonly subscriptionRepository: ISubscriptionRepository,
+    @Inject('ICoupleRepository')
+    private readonly coupleRepository: ICoupleRepository,
     private readonly logger: LoggerService,
   ) {}
 
@@ -52,12 +56,27 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
       coupleId: input.coupleId,
       name: input.name,
       type: input.type,
+      owner_id: input.owner_id,
     });
 
     // Check subscription status
     const subscription = await this.subscriptionRepository.findActiveByCoupleId(input.coupleId);
     if (!subscription) {
       throw new SubscriptionInactiveException();
+    }
+
+    // Get couple to check financial model settings
+    const couple = await this.coupleRepository.findById(input.coupleId);
+    if (!couple) {
+      throw new Error('Couple not found');
+    }
+
+    // FINANCIAL MODEL GUARD: Validate if personal accounts are allowed
+    if (input.owner_id && !couple.allow_personal_accounts) {
+      throw new ForbiddenException(
+        'Contas pessoais não estão habilitadas para este casal. ' +
+        'Altere o modelo financeiro em Configurações para permitir contas pessoais.',
+      );
     }
 
     // Get plan details (not used for now - all plans are premium)
@@ -77,6 +96,7 @@ export class CreateAccountUseCase implements IUseCase<CreateAccountInput, Create
       name: input.name,
       type: input.type,
       current_balance: input.initial_balance || 0,
+      owner_id: input.owner_id ?? null, // null = joint account
     });
 
     const created = await this.accountRepository.create(account);

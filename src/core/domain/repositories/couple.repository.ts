@@ -1,4 +1,5 @@
 import { Couple } from '../entities/couple.entity';
+import { FinancialModel } from '@prisma/client';
 
 /**
  * Couple Repository Interface (Contract)
@@ -27,4 +28,14 @@ export interface ICoupleRepository {
   ): Promise<void>;
 
   resetFreeSpending(coupleId: string): Promise<void>;
+
+  // Financial Model operations
+  updateFinancialModel(
+    coupleId: string,
+    data: {
+      financial_model: FinancialModel;
+      allow_personal_accounts: boolean;
+      allow_private_transactions: boolean;
+    },
+  ): Promise<void>;
 }

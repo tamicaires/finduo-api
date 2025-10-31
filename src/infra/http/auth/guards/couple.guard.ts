@@ -63,6 +63,9 @@ export class CoupleGuard implements CanActivate {
       free_spending_a_remaining: Number(couple.free_spending_a_remaining),
       free_spending_b_remaining: Number(couple.free_spending_b_remaining),
       reset_day: couple.reset_day,
+      financial_model: couple.financial_model,
+      allow_personal_accounts: couple.allow_personal_accounts,
+      allow_private_transactions: couple.allow_private_transactions,
       created_at: couple.created_at,
       updated_at: couple.updated_at,
     });

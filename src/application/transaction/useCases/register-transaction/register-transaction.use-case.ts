@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IUseCase } from '@shared/protocols/use-case.interface';
 import { IAccountRepository } from '@core/domain/repositories/account.repository';
@@ -10,6 +10,7 @@ import { LoggerService } from '@infra/logging/logger.service';
 import { UnitOfWork } from '@infra/database/prisma/unit-of-work';
 import { TransactionType } from '@core/enum/transaction-type.enum';
 import { TransactionRegisteredEvent } from '@application/events/domain-events/transaction-registered.event';
+import { TransactionVisibility } from '@prisma/client';
 
 export interface RegisterTransactionInput {
   coupleId: string;
@@ -21,6 +22,7 @@ export interface RegisterTransactionInput {
   description?: string;
   transaction_date?: Date;
   is_free_spending?: boolean;
+  visibility?: TransactionVisibility; // SHARED, FREE_SPENDING, or PRIVATE
 }
 
 export interface RegisterTransactionOutput {
@@ -85,6 +87,14 @@ export class RegisterTransactionUseCase
       throw new CoupleNotFoundException(input.coupleId);
     }
 
+    // FINANCIAL MODEL GUARD: Validate if private transactions are allowed
+    if (input.visibility === 'PRIVATE' && !couple.allow_private_transactions) {
+      throw new ForbiddenException(
+        'Transações privadas não estão habilitadas para este casal. ' +
+        'Altere o modelo financeiro em Configurações para permitir transações privadas.',
+      );
+    }
+
     // Check free spending if applicable
     if (input.type === TransactionType.EXPENSE && input.is_free_spending) {
       const isUserA = couple.isUserA(input.userId);
@@ -112,6 +122,7 @@ export class RegisterTransactionUseCase
           transaction_date: input.transaction_date || new Date(),
           is_free_spending: input.is_free_spending || false,
           is_couple_expense: false,
+          visibility: input.visibility || 'SHARED', // Default to SHARED
         },
       });
 

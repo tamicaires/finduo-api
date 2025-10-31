@@ -87,7 +87,7 @@ export class CreateCoupleUseCase implements IUseCase<CreateCoupleInput, CreateCo
 
     // Create couple and subscription in a transaction
     const result = await this.unitOfWork.execute(async (prisma) => {
-      // Create couple
+      // Create couple with default CUSTOM financial model (fully configurable)
       const couple = new Couple({
         user_id_a: input.user_id_a,
         user_id_b: input.user_id_b,
@@ -96,6 +96,9 @@ export class CreateCoupleUseCase implements IUseCase<CreateCoupleInput, CreateCo
         free_spending_a_remaining: input.free_spending_a_monthly, // Initial = monthly
         free_spending_b_remaining: input.free_spending_b_monthly,
         reset_day: input.reset_day || 1,
+        financial_model: 'CUSTOM', // Default: fully configurable
+        allow_personal_accounts: true,
+        allow_private_transactions: true,
       });
 
       const createdCouple = await prisma.couple.create({
@@ -108,6 +111,9 @@ export class CreateCoupleUseCase implements IUseCase<CreateCoupleInput, CreateCo
           free_spending_a_remaining: couple.free_spending_a_remaining,
           free_spending_b_remaining: couple.free_spending_b_remaining,
           reset_day: couple.reset_day,
+          financial_model: couple.financial_model,
+          allow_personal_accounts: couple.allow_personal_accounts,
+          allow_private_transactions: couple.allow_private_transactions,
         },
       });
 
