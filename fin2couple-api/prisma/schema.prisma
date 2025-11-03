@@ -120,8 +120,37 @@ model Couple {
   transactions Transaction[]
   categories   Category[]
   subscription Subscription?
+  invites      CoupleInvite[]
 
   @@map("couples")
+}
+
+model CoupleInvite {
+  id                 String              @id @default(uuid())
+  inviter_id         String              // User who is inviting
+  invitee_name       String              // Name of the person being invited
+  invitee_email      String              // Email of the person being invited
+  token              String              @unique // Unique token for the invite link
+  status             CoupleInviteStatus  @default(PENDING)
+  couple_id          String?             @unique // Set when invite is accepted
+  expires_at         DateTime            // Expiration date
+  created_at         DateTime            @default(now())
+  accepted_at        DateTime?
+
+  // Relations
+  couple Couple? @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([inviter_id])
+  @@index([invitee_email])
+  @@map("couple_invites")
+}
+
+enum CoupleInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELED
 }
 
 // ============================================
