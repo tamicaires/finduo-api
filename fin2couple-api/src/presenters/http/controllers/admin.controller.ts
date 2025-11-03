@@ -20,6 +20,7 @@ import { ListAllUsersUseCase } from '@application/admin/useCases/list-all-users/
 import { UpdateUserEmailUseCase } from '@application/admin/useCases/update-user-email/update-user-email.use-case';
 import { LinkCoupleUseCase } from '@application/admin/useCases/link-couple/link-couple.use-case';
 import { UnlinkCoupleUseCase } from '@application/admin/useCases/unlink-couple/unlink-couple.use-case';
+import { RegisterUserByAdminUseCase } from '@application/admin/useCases/register-user/register-user.use-case';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -31,6 +32,7 @@ export class AdminController {
     private readonly updateUserEmailUseCase: UpdateUserEmailUseCase,
     private readonly linkCoupleUseCase: LinkCoupleUseCase,
     private readonly unlinkCoupleUseCase: UnlinkCoupleUseCase,
+    private readonly registerUserByAdminUseCase: RegisterUserByAdminUseCase,
   ) {}
 
   @Get('users')
@@ -46,6 +48,22 @@ export class AdminController {
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       search,
+    });
+  }
+
+  @Post('users')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: '[ADMIN] Register a new user' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 409, description: 'User already exists' })
+  async registerUser(
+    @Body() body: { name: string; email: string; password: string; reason?: string },
+  ) {
+    return this.registerUserByAdminUseCase.execute({
+      name: body.name,
+      email: body.email,
+      password: body.password,
+      reason: body.reason,
     });
   }
 
