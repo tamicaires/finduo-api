@@ -9,6 +9,7 @@ import { Response } from 'express';
 import { I18nContext } from 'nestjs-i18n';
 import { DomainException } from '@core/exceptions/base/domain.exception';
 import { LoggerService } from '@infra/logging/logger.service';
+import { Prisma } from '@prisma/client';
 
 /**
  * Global Exception Filter
@@ -63,6 +64,39 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         statusCode: status,
         userId: (request as any).user?.id,
         coupleId: (request as any).coupleId,
+      });
+    }
+    // Handle Prisma Exceptions
+    else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+      status = HttpStatus.BAD_REQUEST;
+
+      // Map Prisma error codes to user-friendly messages
+      switch (exception.code) {
+        case 'P2002':
+          code = 'DUPLICATE_ENTRY';
+          message = 'This record already exists';
+          translatedMessage = 'Este registro já existe';
+          break;
+        case 'P2025':
+          code = 'NOT_FOUND';
+          status = HttpStatus.NOT_FOUND;
+          message = 'Record not found';
+          translatedMessage = 'Registro não encontrado';
+          break;
+        case 'P2003':
+          code = 'FOREIGN_KEY_VIOLATION';
+          message = 'Cannot perform this operation due to existing relationships';
+          translatedMessage = 'Não é possível realizar esta operação devido a relacionamentos existentes';
+          break;
+        default:
+          code = 'DATABASE_ERROR';
+          message = 'Database operation failed';
+          translatedMessage = 'Erro na operação do banco de dados';
+      }
+
+      this.logger.error(`Prisma Exception: ${exception.code}`, exception.stack, {
+        code: exception.code,
+        meta: exception.meta,
       });
     }
     // Handle NestJS HTTP Exceptions
