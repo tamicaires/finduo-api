@@ -116,11 +116,12 @@ model Couple {
   user_a       User          @relation("UserA", fields: [user_id_a], references: [id], onDelete: Cascade)
   user_b       User          @relation("UserB", fields: [user_id_b], references: [id], onDelete: Cascade)
 
-  accounts     Account[]
-  transactions Transaction[]
-  categories   Category[]
-  subscription Subscription?
-  invites      CoupleInvite[]
+  accounts                       Account[]
+  transactions                   Transaction[]
+  categories                     Category[]
+  subscription                   Subscription?
+  invites                        CoupleInvite[]
+  recurring_transaction_templates RecurringTransactionTemplate[]
 
   @@map("couples")
 }
@@ -264,17 +265,62 @@ model Transaction {
   transaction_date  DateTime              @default(now())
   created_at        DateTime              @default(now())
 
+  // Installment fields (Parcelamento)
+  installment_group_id String? // Groups all installments together
+  installment_number   Int?    // Current installment number (1, 2, 3...)
+  total_installments   Int?    // Total number of installments (12, 24, etc)
+
+  // Recurring fields (Recorrência)
+  recurring_template_id String? // FK to recurring template
+
   // Relations
-  couple   Couple    @relation(fields: [couple_id], references: [id], onDelete: Cascade)
-  paid_by  User      @relation("PaidBy", fields: [paid_by_id], references: [id])
-  account  Account   @relation(fields: [account_id], references: [id])
-  category Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  couple             Couple                           @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  paid_by            User                             @relation("PaidBy", fields: [paid_by_id], references: [id])
+  account            Account                          @relation(fields: [account_id], references: [id])
+  category           Category?                        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  recurring_template RecurringTransactionTemplate?    @relation(fields: [recurring_template_id], references: [id], onDelete: SetNull)
 
   @@index([couple_id])
   @@index([paid_by_id])
   @@index([transaction_date])
   @@index([category_id])
+  @@index([installment_group_id])
+  @@index([recurring_template_id])
   @@map("transactions")
+}
+
+model RecurringTransactionTemplate {
+  id                String                @id @default(uuid())
+  couple_id         String                // FK - Tenant Isolation
+  type              TransactionType
+  amount            Decimal               @db.Decimal(10, 2)
+  description       String?
+  paid_by_id        String                // Who pays
+  account_id        String                // Source/destination account
+  is_couple_expense Boolean               @default(false)
+  is_free_spending  Boolean               @default(false)
+  visibility        TransactionVisibility @default(SHARED)
+  category_id       String?
+
+  // Recurrence configuration
+  frequency       RecurrenceFrequency // DAILY, WEEKLY, MONTHLY, YEARLY
+  interval        Int                 @default(1) // Every X days/weeks/months
+  start_date      DateTime
+  end_date        DateTime?           // null = no end date
+  next_occurrence DateTime
+  is_active       Boolean             @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  couple       Couple        @relation(fields: [couple_id], references: [id], onDelete: Cascade)
+  transactions Transaction[] // Generated transactions history
+
+  @@index([couple_id])
+  @@index([next_occurrence])
+  @@index([is_active])
+  @@map("recurring_transaction_templates")
 }
 
 enum TransactionType {
@@ -286,6 +332,13 @@ enum TransactionVisibility {
   SHARED         // 👥 Compartilhado - both partners see full details
   FREE_SPENDING  // 💰 Gasto Pessoal - deducted from free spending allowance
   PRIVATE        // 🔒 Privado - partner sees amount but not details
+}
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
 }
 
 enum FinancialModel {

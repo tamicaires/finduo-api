@@ -12,6 +12,8 @@ export interface TransactionFilters {
   endDate?: Date;
   isCoupleExpense?: boolean;
   search?: string;
+  installmentGroupId?: string;
+  recurringTemplateId?: string;
 }
 
 export interface MonthlyStats {
@@ -49,4 +51,11 @@ export interface ITransactionRepository {
     startDate: Date,
     endDate: Date,
   ): Promise<number>;
+
+  // Installment queries
+  findByInstallmentGroup(coupleId: string, installmentGroupId: string): Promise<Transaction[]>;
+  findFutureInstallments(coupleId: string, installmentGroupId: string, fromDate: Date): Promise<Transaction[]>;
+  createBatch(transactions: Transaction[]): Promise<Transaction[]>;
+  updateBatch(transactionIds: string[], data: Partial<Transaction>): Promise<void>;
+  deleteBatch(transactionIds: string[]): Promise<void>;
 }

@@ -21,7 +21,7 @@ export class StripeService implements OnModuleInit {
     }
 
     this.stripe = new Stripe(secretKey, {
-      apiVersion: '2025-10-29.clover',
+      apiVersion: '2025-09-30.clover',
     });
 
     this.logger.log('Stripe initialized successfully');

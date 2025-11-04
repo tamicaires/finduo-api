@@ -72,6 +72,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     if (filters.accountId) where.account_id = filters.accountId;
     if (filters.category) where.category = filters.category;
     if (filters.isCoupleExpense !== undefined) where.is_couple_expense = filters.isCoupleExpense;
+    if (filters.installmentGroupId) where.installment_group_id = filters.installmentGroupId;
+    if (filters.recurringTemplateId) where.recurring_template_id = filters.recurringTemplateId;
 
     if (filters.startDate || filters.endDate) {
       where.transaction_date = {};
@@ -261,5 +263,84 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     return Number(result._sum.amount) || 0;
+  }
+
+  async findByInstallmentGroup(coupleId: string, installmentGroupId: string): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        couple_id: coupleId,
+        installment_group_id: installmentGroupId,
+      },
+      orderBy: { installment_number: 'asc' },
+    });
+
+    return transactions.map(PrismaTransactionMapper.toDomain);
+  }
+
+  async findFutureInstallments(
+    coupleId: string,
+    installmentGroupId: string,
+    fromDate: Date,
+  ): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        couple_id: coupleId,
+        installment_group_id: installmentGroupId,
+        transaction_date: {
+          gte: fromDate,
+        },
+      },
+      orderBy: { installment_number: 'asc' },
+    });
+
+    return transactions.map(PrismaTransactionMapper.toDomain);
+  }
+
+  async createBatch(transactions: Transaction[]): Promise<Transaction[]> {
+    const created = await this.prisma.$transaction(
+      transactions.map((transaction) =>
+        this.prisma.transaction.create({
+          data: PrismaTransactionMapper.toPrisma(transaction),
+        }),
+      ),
+    );
+
+    return created.map(PrismaTransactionMapper.toDomain);
+  }
+
+  async updateBatch(transactionIds: string[], data: Partial<Transaction>): Promise<void> {
+    const coupleId = this.tenant.getCoupleId();
+
+    // Only extract updatable fields
+    const updateData: Record<string, unknown> = {};
+    if (data.type !== undefined) updateData.type = data.type;
+    if (data.amount !== undefined) updateData.amount = data.amount;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.paid_by_id !== undefined) updateData.paid_by_id = data.paid_by_id;
+    if (data.account_id !== undefined) updateData.account_id = data.account_id;
+    if (data.is_free_spending !== undefined) updateData.is_free_spending = data.is_free_spending;
+    if (data.is_couple_expense !== undefined) updateData.is_couple_expense = data.is_couple_expense;
+    if (data.visibility !== undefined) updateData.visibility = data.visibility;
+    if (data.category !== undefined) updateData.category_id = data.category;
+    if (data.transaction_date !== undefined) updateData.transaction_date = data.transaction_date;
+
+    await this.prisma.transaction.updateMany({
+      where: {
+        id: { in: transactionIds },
+        couple_id: coupleId,
+      },
+      data: updateData,
+    });
+  }
+
+  async deleteBatch(transactionIds: string[]): Promise<void> {
+    const coupleId = this.tenant.getCoupleId();
+
+    await this.prisma.transaction.deleteMany({
+      where: {
+        id: { in: transactionIds },
+        couple_id: coupleId,
+      },
+    });
   }
 }

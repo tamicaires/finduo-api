@@ -24,6 +24,10 @@ export class PrismaTransactionMapper {
       category: prismaTransaction.category_id,
       transaction_date: prismaTransaction.transaction_date,
       created_at: prismaTransaction.created_at,
+      installment_group_id: prismaTransaction.installment_group_id,
+      installment_number: prismaTransaction.installment_number,
+      total_installments: prismaTransaction.total_installments,
+      recurring_template_id: prismaTransaction.recurring_template_id,
     });
   }
 
@@ -41,6 +45,10 @@ export class PrismaTransactionMapper {
       visibility: transaction.visibility as PrismaTransactionVisibility,
       category_id: transaction.category,
       transaction_date: transaction.transaction_date,
+      installment_group_id: transaction.installment_group_id,
+      installment_number: transaction.installment_number,
+      total_installments: transaction.total_installments,
+      recurring_template_id: transaction.recurring_template_id,
     };
   }
 }
