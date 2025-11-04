@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { IRecurringTransactionTemplateRepository } from '@core/domain/repositories/recurring-transaction-template.repository';
@@ -33,7 +33,9 @@ export class GenerateRecurringTransactionsUseCase {
   private readonly logger = new Logger(GenerateRecurringTransactionsUseCase.name);
 
   constructor(
+    @Inject('ITransactionRepository')
     private readonly transactionRepository: ITransactionRepository,
+    @Inject('IRecurringTransactionTemplateRepository')
     private readonly templateRepository: IRecurringTransactionTemplateRepository,
   ) {}
 

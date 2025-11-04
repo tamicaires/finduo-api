@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { IRecurringTransactionTemplateRepository } from '@core/domain/repositories/recurring-transaction-template.repository';
 import { Transaction } from '@core/domain/entities/transaction.entity';
@@ -38,7 +38,9 @@ export interface UpdateTransactionOutput {
 @Injectable()
 export class UpdateTransactionUseCase {
   constructor(
+    @Inject('ITransactionRepository')
     private readonly transactionRepository: ITransactionRepository,
+    @Inject('IRecurringTransactionTemplateRepository')
     private readonly templateRepository: IRecurringTransactionTemplateRepository,
   ) {}
 

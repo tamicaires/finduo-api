@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
 import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
 import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
 import { CoupleId } from '@infra/http/auth/decorators/couple-id.decorator';
+import { Public } from '@infra/http/auth/decorators/public.decorator';
 import { AuthenticatedUser } from '@shared/types/authenticated-user.type';
 
 @ApiTags('Couple')
@@ -197,6 +198,7 @@ export class CoupleController {
   }
 
   @Post('accept-invite')
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Accept a couple invite' })
   @ApiResponse({

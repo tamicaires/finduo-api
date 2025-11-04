@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { Transaction } from '@core/domain/entities/transaction.entity';
 import { InstallmentInfo } from '@core/domain/value-objects/installment-info.vo';
@@ -40,7 +40,10 @@ export interface CreateInstallmentTransactionOutput {
  */
 @Injectable()
 export class CreateInstallmentTransactionUseCase {
-  constructor(private readonly transactionRepository: ITransactionRepository) {}
+  constructor(
+    @Inject('ITransactionRepository')
+    private readonly transactionRepository: ITransactionRepository,
+  ) {}
 
   async execute(input: CreateInstallmentTransactionInput): Promise<CreateInstallmentTransactionOutput> {
     this.validateInput(input);
