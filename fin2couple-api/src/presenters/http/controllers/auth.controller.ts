@@ -1,10 +1,14 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpUseCase } from '@application/auth/useCases/sign-up/sign-up.use-case';
 import { SignInUseCase } from '@application/auth/useCases/sign-in/sign-in.use-case';
+import { RefreshTokenUseCase } from '@application/auth/useCases/refresh-token/refresh-token.use-case';
 import { SignUpDto } from '../dtos/auth/sign-up.dto';
 import { SignInDto } from '../dtos/auth/sign-in.dto';
 import { Public } from '@infra/http/auth/decorators/public.decorator';
+import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
+import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
+import { AuthenticatedUser } from '@shared/types/authenticated-user.type';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -12,6 +16,7 @@ export class AuthController {
   constructor(
     private readonly signUpUseCase: SignUpUseCase,
     private readonly signInUseCase: SignInUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) {}
 
   @Public()
@@ -50,6 +55,21 @@ export class AuthController {
     return this.signInUseCase.execute({
       email: dto.email,
       password: dto.password,
+    });
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh access token with updated user information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token refreshed successfully with updated information (e.g., after couple linking)',
+  })
+  async refreshToken(@CurrentUser() user: AuthenticatedUser) {
+    return this.refreshTokenUseCase.execute({
+      userId: user.id,
     });
   }
 }

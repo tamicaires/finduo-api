@@ -9,6 +9,7 @@ import { LoggingModule } from '@infra/logging/logging.module';
 import { SignUpUseCase } from './useCases/sign-up/sign-up.use-case';
 import { SignInUseCase } from './useCases/sign-in/sign-in.use-case';
 import { ValidateUserUseCase } from './useCases/validate-user/validate-user.use-case';
+import { RefreshTokenUseCase } from './useCases/refresh-token/refresh-token.use-case';
 
 // Strategies
 import { JwtStrategy } from '@infra/http/auth/strategies/jwt.strategy';
@@ -41,6 +42,7 @@ import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma
     SignUpUseCase,
     SignInUseCase,
     ValidateUserUseCase,
+    RefreshTokenUseCase,
 
     // Strategies
     JwtStrategy,
@@ -52,6 +54,6 @@ import { PrismaUserRepository } from '@infra/database/prisma/repositories/prisma
       useClass: PrismaUserRepository,
     },
   ],
-  exports: [SignUpUseCase, SignInUseCase, ValidateUserUseCase, JwtModule],
+  exports: [SignUpUseCase, SignInUseCase, ValidateUserUseCase, RefreshTokenUseCase, JwtModule],
 })
 export class AuthModule {}
