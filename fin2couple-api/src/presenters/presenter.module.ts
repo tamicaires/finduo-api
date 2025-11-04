@@ -14,6 +14,7 @@ import { AuthController } from './http/controllers/auth.controller';
 import { CoupleController } from './http/controllers/couple.controller';
 import { AccountController } from './http/controllers/account.controller';
 import { TransactionController } from './http/controllers/transaction.controller';
+import { RecurringTemplateController } from './http/controllers/recurring-template.controller';
 import { CategoryController } from './http/controllers/category.controller';
 import { UserGameProfileController } from './http/controllers/user-game-profile.controller';
 import { AchievementController } from './http/controllers/achievement.controller';
@@ -36,6 +37,7 @@ import { AdminController } from './http/controllers/admin.controller';
     CoupleController,
     AccountController,
     TransactionController,
+    RecurringTemplateController,
     CategoryController,
     UserGameProfileController,
     AchievementController,

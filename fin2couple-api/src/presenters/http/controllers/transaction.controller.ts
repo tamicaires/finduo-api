@@ -4,13 +4,20 @@ import { RegisterTransactionUseCase } from '@application/transaction/useCases/re
 import { ListTransactionsUseCase } from '@application/transaction/useCases/list-transactions/list-transactions.use-case';
 import { DeleteTransactionUseCase } from '@application/transaction/useCases/delete-transaction/delete-transaction.use-case';
 import { UpdateFreeSpendingUseCase } from '@application/transaction/useCases/update-free-spending/update-free-spending.use-case';
+import { CreateInstallmentTransactionUseCase } from '@application/transaction/useCases/create-installment-transaction/create-installment-transaction.use-case';
+import { CreateRecurringTransactionUseCase } from '@application/transaction/useCases/create-recurring-transaction/create-recurring-transaction.use-case';
+import { UpdateTransactionUseCase } from '@application/transaction/useCases/update-transaction/update-transaction.use-case';
 import { RegisterTransactionDto } from '../dtos/transaction/register-transaction.dto';
 import { UpdateFreeSpendingDto } from '../dtos/transaction/update-free-spending.dto';
+import { CreateInstallmentTransactionDto } from '../dtos/transaction/create-installment-transaction.dto';
+import { CreateRecurringTransactionDto } from '../dtos/transaction/create-recurring-transaction.dto';
+import { UpdateTransactionWithScopeDto } from '../dtos/transaction/update-transaction-with-scope.dto';
 import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
 import { CoupleGuard } from '@infra/http/auth/guards/couple.guard';
 import { CurrentUser } from '@infra/http/auth/decorators/current-user.decorator';
 import { CoupleId } from '@infra/http/auth/decorators/couple-id.decorator';
 import { AuthenticatedUser } from '@shared/types/authenticated-user.type';
+import { TransactionVisibility } from '@core/enum/transaction-visibility.enum';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -22,6 +29,9 @@ export class TransactionController {
     private readonly listTransactionsUseCase: ListTransactionsUseCase,
     private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
     private readonly updateFreeSpendingUseCase: UpdateFreeSpendingUseCase,
+    private readonly createInstallmentTransactionUseCase: CreateInstallmentTransactionUseCase,
+    private readonly createRecurringTransactionUseCase: CreateRecurringTransactionUseCase,
+    private readonly updateTransactionUseCase: UpdateTransactionUseCase,
   ) {}
 
   @Post()
@@ -187,6 +197,110 @@ export class TransactionController {
     return this.deleteTransactionUseCase.execute({
       coupleId,
       transactionId,
+    });
+  }
+
+  @Post('installment')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create installment transactions' })
+  @ApiResponse({
+    status: 201,
+    description: 'Installment transactions created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input (minimum 2 installments required)',
+  })
+  async createInstallmentTransaction(
+    @CoupleId() coupleId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateInstallmentTransactionDto,
+  ) {
+    return this.createInstallmentTransactionUseCase.execute({
+      couple_id: coupleId,
+      type: dto.type,
+      total_amount: dto.total_amount,
+      total_installments: dto.total_installments,
+      description: dto.description ?? null,
+      paid_by_id: user.id,
+      account_id: dto.account_id,
+      is_couple_expense: dto.is_couple_expense ?? false,
+      is_free_spending: dto.is_free_spending ?? false,
+      visibility: dto.visibility ?? TransactionVisibility.SHARED,
+      category: dto.category_id ?? null,
+      first_installment_date: dto.first_installment_date ?? new Date(),
+    });
+  }
+
+  @Post('recurring')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create recurring transaction template' })
+  @ApiResponse({
+    status: 201,
+    description: 'Recurring transaction template created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid recurrence configuration',
+  })
+  async createRecurringTransaction(
+    @CoupleId() coupleId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateRecurringTransactionDto,
+  ) {
+    return this.createRecurringTransactionUseCase.execute({
+      couple_id: coupleId,
+      type: dto.type,
+      amount: dto.amount,
+      description: dto.description ?? null,
+      paid_by_id: user.id,
+      account_id: dto.account_id,
+      is_couple_expense: dto.is_couple_expense ?? false,
+      is_free_spending: dto.is_free_spending ?? false,
+      visibility: dto.visibility ?? TransactionVisibility.SHARED,
+      category: dto.category_id ?? null,
+      frequency: dto.frequency,
+      interval: dto.interval ?? 1,
+      start_date: dto.start_date,
+      end_date: dto.end_date ?? null,
+      create_first_transaction: dto.create_first_transaction ?? true,
+    });
+  }
+
+  @Patch(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update transaction with scope (for installment/recurring)' })
+  @ApiParam({
+    name: 'id',
+    description: 'Transaction ID',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction(s) updated successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
+  })
+  async updateTransaction(
+    @Param('id') transactionId: string,
+    @Body() dto: UpdateTransactionWithScopeDto,
+  ) {
+    return this.updateTransactionUseCase.execute({
+      transaction_id: transactionId,
+      update_scope: dto.update_scope,
+      update_data: {
+        type: dto.type,
+        amount: dto.amount,
+        description: dto.description ?? null,
+        account_id: dto.account_id,
+        category: dto.category_id ?? null,
+        is_couple_expense: dto.is_couple_expense,
+        is_free_spending: dto.is_free_spending,
+        visibility: dto.visibility,
+        transaction_date: dto.transaction_date,
+      },
     });
   }
 }

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { DatabaseModule } from '@infra/database/database.module';
 import { LoggingModule } from '@infra/logging/logging.module';
@@ -15,6 +16,7 @@ import { JwtAuthGuard } from '@infra/http/auth/guards/jwt-auth.guard';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     LoggingModule,
     I18nModule,
