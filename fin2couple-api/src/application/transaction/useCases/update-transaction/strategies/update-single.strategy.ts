@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ITransactionRepository } from '@core/domain/repositories/transaction.repository';
 import { Transaction } from '@core/domain/entities/transaction.entity';
 import { IUpdateTransactionStrategy } from './update-strategy.interface';
@@ -11,7 +11,10 @@ import { IUpdateTransactionStrategy } from './update-strategy.interface';
  */
 @Injectable()
 export class UpdateSingleStrategy implements IUpdateTransactionStrategy {
-  constructor(private readonly transactionRepository: ITransactionRepository) {}
+  constructor(
+    @Inject('ITransactionRepository')
+    private readonly transactionRepository: ITransactionRepository,
+  ) {}
 
   async execute(transactionId: string, updateData: Partial<Transaction>): Promise<Transaction[]> {
     // Simply update the single transaction
