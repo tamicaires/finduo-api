@@ -10,6 +10,7 @@ import { UpdateUserEmailUseCase } from './useCases/update-user-email/update-user
 import { LinkCoupleUseCase } from './useCases/link-couple/link-couple.use-case';
 import { UnlinkCoupleUseCase } from './useCases/unlink-couple/unlink-couple.use-case';
 import { RegisterUserByAdminUseCase } from './useCases/register-user/register-user.use-case';
+import { AssignPlanToCoupleUseCase } from './useCases/assign-plan-to-couple/assign-plan-to-couple.use-case';
 
 @Module({
   imports: [DatabaseModule, LoggingModule],
@@ -27,6 +28,7 @@ import { RegisterUserByAdminUseCase } from './useCases/register-user/register-us
     LinkCoupleUseCase,
     UnlinkCoupleUseCase,
     RegisterUserByAdminUseCase,
+    AssignPlanToCoupleUseCase,
   ],
   exports: [
     ListAllUsersUseCase,
@@ -34,6 +36,7 @@ import { RegisterUserByAdminUseCase } from './useCases/register-user/register-us
     LinkCoupleUseCase,
     UnlinkCoupleUseCase,
     RegisterUserByAdminUseCase,
+    AssignPlanToCoupleUseCase,
   ],
 })
 export class AdminModule {}

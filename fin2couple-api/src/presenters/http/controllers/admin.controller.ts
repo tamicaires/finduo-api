@@ -21,6 +21,10 @@ import { UpdateUserEmailUseCase } from '@application/admin/useCases/update-user-
 import { LinkCoupleUseCase } from '@application/admin/useCases/link-couple/link-couple.use-case';
 import { UnlinkCoupleUseCase } from '@application/admin/useCases/unlink-couple/unlink-couple.use-case';
 import { RegisterUserByAdminUseCase } from '@application/admin/useCases/register-user/register-user.use-case';
+import { AssignPlanToCoupleUseCase } from '@application/admin/useCases/assign-plan-to-couple/assign-plan-to-couple.use-case';
+
+// DTOs
+import { AssignPlanDto } from '../dtos/admin/assign-plan.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -33,6 +37,7 @@ export class AdminController {
     private readonly linkCoupleUseCase: LinkCoupleUseCase,
     private readonly unlinkCoupleUseCase: UnlinkCoupleUseCase,
     private readonly registerUserByAdminUseCase: RegisterUserByAdminUseCase,
+    private readonly assignPlanToCoupleUseCase: AssignPlanToCoupleUseCase,
   ) {}
 
   @Get('users')
@@ -112,6 +117,20 @@ export class AdminController {
     return this.unlinkCoupleUseCase.execute({
       couple_id: coupleId,
       reason: body?.reason,
+    });
+  }
+
+  @Post('couples/assign-plan')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '[ADMIN] Assign a plan to a couple' })
+  @ApiResponse({ status: 200, description: 'Plan assigned successfully' })
+  @ApiResponse({ status: 404, description: 'Couple or Plan not found' })
+  async assignPlanToCouple(@Body() body: AssignPlanDto) {
+    return this.assignPlanToCoupleUseCase.execute({
+      coupleId: body.couple_id,
+      planName: body.plan_name,
+      durationDays: body.duration_days,
+      reason: body.reason,
     });
   }
 }
