@@ -1,4 +1,4 @@
-import { Controller, Get, Delete, Post, Param, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Param, UseGuards, HttpCode, HttpStatus, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { IRecurringTransactionTemplateRepository } from '@core/domain/repositories/recurring-transaction-template.repository';
 import { GenerateRecurringTransactionsUseCase } from '@application/transaction/useCases/generate-recurring-transactions/generate-recurring-transactions.use-case';
@@ -12,6 +12,7 @@ import { CoupleId } from '@infra/http/auth/decorators/couple-id.decorator';
 @Controller('recurring-templates')
 export class RecurringTemplateController {
   constructor(
+    @Inject('IRecurringTransactionTemplateRepository')
     private readonly templateRepository: IRecurringTransactionTemplateRepository,
     private readonly generateRecurringTransactionsUseCase: GenerateRecurringTransactionsUseCase,
   ) {}
