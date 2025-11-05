@@ -16,6 +16,9 @@ export interface GetCoupleDashboardOutput {
   couple: {
     id: string;
     reset_day: number;
+    financial_model: string;
+    allow_personal_accounts: boolean;
+    allow_private_transactions: boolean;
   };
 
   // Financial overview
@@ -122,6 +125,9 @@ export class GetCoupleDashboardUseCase
       couple: {
         id: couple.id,
         reset_day: couple.reset_day,
+        financial_model: couple.financial_model,
+        allow_personal_accounts: couple.allow_personal_accounts,
+        allow_private_transactions: couple.allow_private_transactions,
       },
       total_balance: totalBalance,
       monthly_income: monthlyStats.totalIncome,
